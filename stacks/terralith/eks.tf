@@ -23,7 +23,7 @@ data "aws_caller_identity" "current" {}
 ################################################################################
 
 module "eks" {
-  source = "terraform-aws-modules/eks/aws"
+  source  = "terraform-aws-modules/eks/aws"
   version = "18.26.2"
 
   cluster_name                    = local.name
@@ -189,8 +189,8 @@ resource "aws_iam_policy" "node_additional" {
 
 
 resource "aws_iam_role" "eks-admin" {
-  name = "${local.name}-eks-admin"
-  description = "Role to assume to administer the cluster"
+  name               = "${local.name}-eks-admin"
+  description        = "Role to assume to administer the cluster"
   assume_role_policy = data.aws_iam_policy_document.assume-eks-admin.json
 }
 
@@ -200,7 +200,7 @@ data "aws_iam_policy_document" "assume-eks-admin" {
     actions = ["sts:AssumeRole"]
     principals {
       type        = "AWS"
-      identifiers = [format("arn:aws:iam::%s:root",data.aws_caller_identity.current.account_id)]
+      identifiers = [format("arn:aws:iam::%s:root", data.aws_caller_identity.current.account_id)]
     }
   }
 }
@@ -212,7 +212,7 @@ locals {
 }
 resource "kubernetes_namespace_v1" "application" {
   metadata {
-    labels = merge(local.tags,{
+    labels = merge(local.tags, {
       owner = "terraform"
     })
     name = local.application-ns-name
