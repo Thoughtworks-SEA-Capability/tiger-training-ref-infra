@@ -1,12 +1,3 @@
-### Vars ###
-variable "name" {}
-variable "vpc_id" {}
-variable "db_subnet_group_name" {}
-variable "subnets" {}
-variable "allowed_security_groups" {}
-variable "tags" {}
-
-### Core ###
 locals {
   db_name = "${var.name}-app-a-db"
 }
@@ -59,21 +50,4 @@ resource "aws_rds_cluster_parameter_group" "db" {
   tags = merge(var.tags, {
     Name : local.db_name
   })
-}
-
-### Outputs ###
-output "cluster_database_name" {
-  value = module.cluster.cluster_database_name
-}
-
-output "cluster_endpoint" {
-  value = module.cluster.cluster_endpoint
-}
-
-output "cluster_master_username" {
-  value = module.cluster.cluster_master_username
-}
-
-output "cluster_master_password" {
-  value = module.cluster.cluster_master_password
 }
