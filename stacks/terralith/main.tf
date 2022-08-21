@@ -1,3 +1,21 @@
+module "iam" {
+  source = "./iam"
+
+  name = local.name
+}
+
+module "eks" {
+  source = "./eks"
+
+  name = local.name
+  vpc_id = module.vpc.vpc_id
+  eks_master_subnets = slice(module.vpc.private_subnets,0,3)
+  eks_admin_arn = module.iam.eks_admin_arn
+  application_ns_name = local.application-ns-name
+
+  tags = local.tags
+}
+
 module "rds" {
   source = "./rds"
 
@@ -10,8 +28,6 @@ module "rds" {
   tags                    = local.tags
 }
 
-// This secret name is sort of like config store for infra to pass on data to the application layer
-// The name is agreed on by convention, changing the name will break the test and whatever subsequent application
 resource "kubernetes_secret_v1" "app-a-rds-creds" {
   metadata {
     name      = "app-a-db"
@@ -23,4 +39,8 @@ resource "kubernetes_secret_v1" "app-a-rds-creds" {
     db_username = module.rds.cluster_master_username,
     db_password = module.rds.cluster_master_password,
   }
+}
+
+locals {
+  application-ns-name = "application"
 }
