@@ -3,7 +3,7 @@ locals {
 }
 
 module "eks" {
-  source = "terraform-aws-modules/eks/aws"
+  source  = "terraform-aws-modules/eks/aws"
   version = "18.26.2"
 
   cluster_name                    = var.name
@@ -75,8 +75,8 @@ module "eks" {
   }
 
   eks_managed_node_group_defaults = {
-    ami_type       = "AL2_x86_64"
-    instance_types = ["t3.small", "t3a.small", "t2.small"]
+    ami_type                   = "AL2_x86_64"
+    instance_types             = ["t3.small", "t3a.small", "t2.small"]
     iam_role_attach_cni_policy = true
   }
 
@@ -149,7 +149,7 @@ resource "aws_iam_policy" "node_additional" {
 
 resource "kubernetes_namespace_v1" "application" {
   metadata {
-    labels = merge(var.tags,{
+    labels = merge(var.tags, {
       owner = "terraform"
     })
     name = var.application_ns_name
