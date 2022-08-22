@@ -7,20 +7,6 @@ variable "application_ns_name" {}
 variable "tags" {}
 
 ### Core ###
-data "aws_eks_cluster" "default" {
-  name = module.eks.cluster_id
-}
-
-data "aws_eks_cluster_auth" "default" {
-  name = module.eks.cluster_id
-}
-
-provider "kubernetes" {
-  host                   = data.aws_eks_cluster.default.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.default.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.default.token
-}
-
 locals {
   cluster_version = "1.22"
 }
@@ -182,4 +168,8 @@ resource "kubernetes_namespace_v1" "application" {
 ### Output ###
 output "cluster_primary_security_group_id" {
   value = module.eks.cluster_primary_security_group_id
+}
+
+output "cluster_id" {
+  value = module.eks.cluster_id
 }
