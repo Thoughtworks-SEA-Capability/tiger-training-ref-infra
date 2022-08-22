@@ -20,5 +20,5 @@ resource "aws_iam_role" "eks-admin" {
 }
 
 output "eks_admin_arn" {
-  value = aws_iam_role.eks-admin.id
+  value = aws_iam_role.eks-admin.arn
 }
