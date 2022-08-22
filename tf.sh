@@ -15,7 +15,7 @@ terraform init -backend-config="key=${TF_VAR_team_name}/dev/terralith"
 #     --name $cluster_name \
 #     --role-arn $cluster_admin_role_arn
 
-# cd ../../tests
-# go test
+cd ../../tests
+go test
 
-terraform destroy --var-file=dev.tfvars
+# terraform destroy --var-file=dev.tfvars

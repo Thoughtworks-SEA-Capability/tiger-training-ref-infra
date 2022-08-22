@@ -1,14 +1,3 @@
-locals {
-  team        = var.team_name
-  stack       = "terralith"
-  environment = var.environment
-  name        = "${local.team}-${local.environment}-${local.stack}"
-  tags = {
-    team        = local.team
-    stack       = local.stack
-    environment = local.environment
-  }
-}
 data "aws_availability_zones" "azs" {
 }
 
@@ -16,16 +5,16 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "3.14.2"
 
-  name = local.name
+  name = var.name
   cidr = "10.0.0.0/16"
-  tags = merge(local.tags, {
-    Name = local.name
+  tags = merge(var.tags, {
+    Name = var.name
   })
 
   azs            = data.aws_availability_zones.azs.names
   public_subnets = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
-  public_subnet_tags = merge(local.tags, {
-    Name = "${local.name}-public"
+  public_subnet_tags = merge(var.tags, {
+    Name = "${var.name}-public"
     type = "public"
   })
 
@@ -35,8 +24,8 @@ module "vpc" {
     # Private subnets for EKS Nodes
     "10.0.108.0/23", "10.0.110.0/23", "10.0.112.0/23",
   ]
-  private_subnet_tags = merge(local.tags, {
-    Name = "${local.name}-private"
+  private_subnet_tags = merge(var.tags, {
+    Name = "${var.name}-private"
     type = "private"
   })
 
@@ -44,8 +33,8 @@ module "vpc" {
     # Private subnets for EKS Nodes
     "10.0.114.0/26", "10.0.114.64/26", "10.0.114.128/26",
   ]
-  database_subnet_tags = merge(local.tags, {
-    Name = "${local.name}-db"
+  database_subnet_tags = merge(var.tags, {
+    Name = "${var.name}-db"
     type = "db"
   })
 

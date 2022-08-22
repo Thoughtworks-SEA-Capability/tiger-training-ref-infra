@@ -1,7 +1,14 @@
 module "iam" {
   source = "./iam"
-
   name = local.name
+}
+
+module "vpc" {
+  source = "./vpc"
+  name = local.name
+  team_name = var.team_name
+  environment = var.environment
+  tags = local.tags
 }
 
 data "aws_eks_cluster" "default" {
@@ -20,24 +27,20 @@ provider "kubernetes" {
 
 module "eks" {
   source = "./eks"
-
   name = local.name
   vpc_id = module.vpc.vpc_id
-  eks_master_subnets = slice(module.vpc.private_subnets,0,3)
+  eks_master_subnets = slice(module.vpc.private_subnets, 0, 3)
   eks_admin_arn = module.iam.eks_admin_arn
   application_ns_name = local.application-ns-name
-
   tags = local.tags
 }
 
 module "rds" {
   source = "./rds"
-
   name                 = local.name
   vpc_id               = module.vpc.vpc_id
   db_subnet_group_name = module.vpc.database_subnet_group_name
   subnets              = module.vpc.database_subnets
-
   allowed_security_groups = [module.eks.cluster_primary_security_group_id]
   tags                    = local.tags
 }
@@ -57,4 +60,13 @@ resource "kubernetes_secret_v1" "app-a-rds-creds" {
 
 locals {
   application-ns-name = "application"
+  team        = var.team_name
+  stack       = "terralith"
+  environment = var.environment
+  name        = "${local.team}-${local.environment}-${local.stack}"
+  tags = {
+    team        = local.team
+    stack       = local.stack
+    environment = local.environment
+  }
 }
