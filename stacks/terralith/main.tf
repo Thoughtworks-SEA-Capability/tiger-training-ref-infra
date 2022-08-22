@@ -1,8 +1,8 @@
-# module "iam" {
-#   source = "./iam"
+module "iam" {
+  source = "./iam"
 
-#   name = local.name
-# }
+  name = local.name
+}
 
 data "aws_eks_cluster" "default" {
   name = module.eks.cluster_id
@@ -24,7 +24,7 @@ module "eks" {
   name = local.name
   vpc_id = module.vpc.vpc_id
   eks_master_subnets = slice(module.vpc.private_subnets,0,3)
-  # eks_admin_arn = module.iam.eks_admin_arn
+  eks_admin_arn = module.iam.eks_admin_arn
   application_ns_name = local.application-ns-name
 
   tags = local.tags

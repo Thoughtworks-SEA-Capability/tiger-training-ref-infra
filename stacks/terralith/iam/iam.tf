@@ -1,5 +1,3 @@
-variable "name" {}
-
 data "aws_caller_identity" "current" {}
 
 data "aws_iam_policy_document" "assume-eks-admin" {
@@ -17,8 +15,4 @@ resource "aws_iam_role" "eks-admin" {
   name = "${var.name}-eks-admin"
   description = "Role to assume to administer the cluster"
   assume_role_policy = data.aws_iam_policy_document.assume-eks-admin.json
-}
-
-output "eks_admin_arn" {
-  value = aws_iam_role.eks-admin.arn
 }

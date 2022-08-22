@@ -1,12 +1,3 @@
-### Vars ###
-variable "name" {}
-variable "vpc_id" {}
-variable "eks_master_subnets" {}
-# variable "eks_admin_arn" {}
-variable "application_ns_name" {}
-variable "tags" {}
-
-### Core ###
 locals {
   cluster_version = "1.22"
 }
@@ -46,7 +37,7 @@ module "eks" {
   manage_aws_auth_configmap = true
   aws_auth_roles = [
     {
-      rolearn  = aws_iam_role.eks-admin.arn
+      rolearn  = var.eks_admin_arn
       username = "admin"
       groups   = ["system:masters"]
     },
@@ -163,36 +154,4 @@ resource "kubernetes_namespace_v1" "application" {
     })
     name = var.application_ns_name
   }
-}
-
-data "aws_caller_identity" "current" {}
-
-data "aws_iam_policy_document" "assume-eks-admin" {
-  version = "2012-10-17"
-  statement {
-    actions = ["sts:AssumeRole"]
-    principals {
-      type        = "AWS"
-      identifiers = [format("arn:aws:iam::%s:root",data.aws_caller_identity.current.account_id)]
-    }
-  }
-}
-
-resource "aws_iam_role" "eks-admin" {
-  name = "${var.name}-eks-admin"
-  description = "Role to assume to administer the cluster"
-  assume_role_policy = data.aws_iam_policy_document.assume-eks-admin.json
-}
-
-### Output ###
-output "cluster_primary_security_group_id" {
-  value = module.eks.cluster_primary_security_group_id
-}
-
-output "cluster_id" {
-  value = module.eks.cluster_id
-}
-
-output "eks_admin_arn" {
-  value = aws_iam_role.eks-admin.arn
 }
