@@ -13,10 +13,9 @@ jobs:
       - run:
           name: terraform init & plan
           command: |
-            pushd week2/stacks/networking
+            cd week2/stacks/networking
             terraform init -input=false -backend-config=-backend-config="key=${TF_VAR_team_name}/${TF_VAR_environment}/networking"
             terraform plan -out tfapply
-            popd
       - persist_to_workspace:
           root: .
           paths:
@@ -31,9 +30,8 @@ jobs:
       - run:
           name: terraform
           command: |
-            pushd week2/stacks/networking
+            cd week2/stacks/networking
             terraform apply -auto-approve tfapply
-            popd
       - persist_to_workspace:
           root: .
           paths:
