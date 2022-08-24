@@ -14,7 +14,7 @@ jobs:
           name: terraform init & plan
           command: |
             cd week2/stacks/networking
-            terraform init -input=false -backend-config=-backend-config="key=${TF_VAR_team_name}/${TF_VAR_environment}/networking"
+            terraform init -input=false -backend-config="key=${TF_VAR_team_name}/${TF_VAR_environment}/networking"
             terraform plan -out tfapply
       - persist_to_workspace:
           root: .
@@ -22,6 +22,9 @@ jobs:
             - .
 
   apply:
+    environment:
+      TF_VAR_team_name: ankit
+      TF_VAR_environment: stg
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
     steps:
