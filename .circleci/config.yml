@@ -74,7 +74,7 @@ jobs:
   #           terraform apply -auto-approve tfdestroy
 workflows:
   version: 2
-  networking_deploy_stg:
+  networking:
     jobs:
       - plan:
           name: plan-stg
@@ -100,8 +100,6 @@ workflows:
             - plan-prod
       - apply:
           name: apply-prod
-          environment: 'prod'
-          stack: 'networking'
           requires:
             - approve-prod
       # - plan-destroy:
