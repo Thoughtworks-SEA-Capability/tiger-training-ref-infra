@@ -15,9 +15,6 @@ jobs:
         type: string
       stack:
         type: string
-#    environment:
-#      TF_VAR_team_name: ankit
-#      TF_VAR_environment: stg
     steps:
       - checkout
       - run:
@@ -101,6 +98,12 @@ workflows:
           type: approval
           requires:
             - plan-prod
+      - apply:
+          name: apply-prod
+          environment: 'prod'
+          stack: 'networking'
+          requires:
+            - approve-prod
       # - plan-destroy:
       #     requires:
       #       - apply
