@@ -22,7 +22,7 @@ jobs:
           command: |
             cd week2/stacks/<< parameters.stack >>
             terraform init -input=false -backend-config="key=<< parameters.team >>/<< parameters.environment >>/<< parameters.stack >>"
-            terraform plan -var-file=../../environments/<< parameter.environment >>.tfvars -out tfapply
+            terraform plan -var-file=../../environments/<< parameters.environment >>.tfvars -out tfapply
       - persist_to_workspace:
           root: .
           paths:
