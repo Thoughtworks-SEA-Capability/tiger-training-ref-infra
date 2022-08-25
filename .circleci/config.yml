@@ -106,7 +106,7 @@ workflows:
           name: apply-prod
           stack: 'networking'
           requires:
-            - networking-approve-prod
+            - approve-prod
   eks:
     jobs:
       - plan:
