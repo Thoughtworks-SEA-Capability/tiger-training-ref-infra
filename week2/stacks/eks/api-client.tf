@@ -23,4 +23,3 @@ locals {
   eks_node_subnets_v2 = toset(jsondecode(data.aws_ssm_parameter.eks_node_subnets_v2.value))
   vpc_id = tostring(data.aws_ssm_parameter.vpc_id.value)
 }
-

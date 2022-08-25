@@ -214,13 +214,22 @@ provider "kubernetes" {
 }
 
 locals {
-  application-ns-name = "application"
+  application_ns_name = "application"
+  application_ns_name_v2 = "workloads"
 }
 resource "kubernetes_namespace_v1" "application" {
   metadata {
     labels = merge(local.tags,{
       owner = "terraform"
     })
-    name = local.application-ns-name
+    name = local.application_ns_name
+  }
+}
+resource "kubernetes_namespace_v1" "application_v2" {
+  metadata {
+    labels = merge(local.tags,{
+      owner = "terraform"
+    })
+    name = local.application_ns_name_v2
   }
 }
