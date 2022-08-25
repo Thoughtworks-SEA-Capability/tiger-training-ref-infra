@@ -14,7 +14,7 @@ data "aws_availability_zones" "azs" {
 }
 
 module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
+  source = "terraform-aws-modules/vpc/aws"
   # fixing to exact version, will prevent need for packaging
   version = "3.14.2"
 
@@ -33,9 +33,11 @@ module "vpc" {
 
   private_subnets = [
     # Private subnets for EKS Control Plane
-    "10.0.104.0/24","10.0.105.0/24","10.0.106.0/24",
+    "10.0.104.0/24", "10.0.105.0/24", "10.0.106.0/24",
     # Private subnets for EKS Nodes
-    "10.0.108.0/23", "10.0.110.0/23","10.0.112.0/23",
+    "10.0.108.0/23", "10.0.110.0/23", "10.0.112.0/23",
+    # Private subnets for EKS Nodes v2
+    "10.0.120.0/21", "10.0.128.0/21", "10.0.136.0/21",
   ]
   private_subnet_tags = merge(local.tags, {
     Name = "${local.name}-private"
@@ -44,7 +46,7 @@ module "vpc" {
 
   database_subnets = [
     # Private subnets for EKS Nodes
-    "10.0.114.0/26", "10.0.114.64/26","10.0.114.128/26",
+    "10.0.114.0/26", "10.0.114.64/26", "10.0.114.128/26",
   ]
   database_subnet_tags = merge(local.tags, {
     Name = "${local.name}-db"
@@ -52,8 +54,8 @@ module "vpc" {
   })
 
   # One NAT per Az
-  enable_nat_gateway = true
-  single_nat_gateway = false
+  enable_nat_gateway     = true
+  single_nat_gateway     = false
   one_nat_gateway_per_az = true
 
 }
