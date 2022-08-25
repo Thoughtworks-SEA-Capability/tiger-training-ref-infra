@@ -97,7 +97,7 @@ workflows:
           environment: 'prod'
           stack: 'networking'
           requires:
-            - apply-stg
+            - networking-apply-stg
       - approve-prod:
           type: approval
           requires:
