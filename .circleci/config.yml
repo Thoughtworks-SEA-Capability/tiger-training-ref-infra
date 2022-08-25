@@ -5,17 +5,24 @@ jobs:
     working_directory: /tmp/project
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
-    environment:
-      TF_VAR_team_name: ankit
-      TF_VAR_environment: stg
+    parameters:
+      team:
+        type: string
+      environment:
+        type: string
+      stack:
+        type: string
+#    environment:
+#      TF_VAR_team_name: ankit
+#      TF_VAR_environment: stg
     steps:
       - checkout
       - run:
           name: terraform init & plan
           command: |
-            cd week2/stacks/networking
-            terraform init -input=false -backend-config="key=${TF_VAR_team_name}/${TF_VAR_environment}/networking"
-            terraform plan -out tfapply
+            cd week2/stacks/<< parameters.stack >>
+            terraform init -input=false -backend-config="key=<< parameters.team >>/<< parameters.environment >>/<< parameters.stack >>"
+            terraform plan -var-file=../../environments/<< parameter.environment >>.tfvars -out tfapply
       - persist_to_workspace:
           root: .
           paths:
@@ -69,7 +76,10 @@ workflows:
   version: 2
   plan_approve_apply:
     jobs:
-      - plan-apply
+      - plan-apply:
+          team: ankit
+          environment: stg
+          stack: networking
       - hold-apply:
           type: approval
           requires:
