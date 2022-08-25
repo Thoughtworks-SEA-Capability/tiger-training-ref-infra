@@ -102,6 +102,34 @@ workflows:
           name: apply-prod
           requires:
             - approve-prod
+  eks:
+    jobs:
+      - plan:
+          name: plan-stg
+          environment: 'stg'
+          stack: 'eks'
+      - approve-stg:
+          type: approval
+          requires:
+            - plan-stg
+      - apply:
+          name: apply-stg
+          requires:
+            - approve-stg
+      - plan:
+          name: plan-prod
+          environment: 'prod'
+          stack: 'eks'
+          requires:
+            - apply-stg
+      - approve-prod:
+          type: approval
+          requires:
+            - plan-prod
+      - apply:
+          name: apply-prod
+          requires:
+            - approve-prod
       # - plan-destroy:
       #     requires:
       #       - apply
