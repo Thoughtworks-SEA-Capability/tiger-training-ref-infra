@@ -34,13 +34,16 @@ jobs:
   apply:
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
+    parameters:
+      stack:
+        type: string
     steps:
       - attach_workspace:
           at: .
       - run:
           name: terraform
           command: |
-            cd week2/stacks/networking
+            cd week2/stacks/<< parameters.stack >>
             terraform apply -auto-approve tfapply
       - persist_to_workspace:
           root: .
@@ -86,6 +89,7 @@ workflows:
             - plan-stg
       - apply:
           name: apply-stg
+          stack: 'networking'
           requires:
             - approve-stg
       - plan:
@@ -100,6 +104,7 @@ workflows:
             - plan-prod
       - apply:
           name: apply-prod
+          stack: 'networking'
           requires:
             - approve-prod
   eks:
@@ -114,6 +119,7 @@ workflows:
             - plan-stg
       - apply:
           name: apply-stg
+          stack: 'eks'
           requires:
             - approve-stg
       - plan:
@@ -128,6 +134,7 @@ workflows:
             - plan-prod
       - apply:
           name: apply-prod
+          stack: 'eks'
           requires:
             - approve-prod
       # - plan-destroy:
