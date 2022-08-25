@@ -80,20 +80,20 @@ workflows:
   networking:
     jobs:
       - plan:
-          name: plan-stg
+          name: networking-plan-stg
           environment: 'stg'
           stack: 'networking'
       - approve-stg:
           type: approval
           requires:
-            - plan-stg
+            - networking-plan-stg
       - apply:
-          name: apply-stg
+          name: networking-apply-stg
           stack: 'networking'
           requires:
             - approve-stg
       - plan:
-          name: plan-prod
+          name: networking-plan-prod
           environment: 'prod'
           stack: 'networking'
           requires:
@@ -101,42 +101,72 @@ workflows:
       - approve-prod:
           type: approval
           requires:
-            - plan-prod
+            - networking-plan-prod
       - apply:
           name: apply-prod
           stack: 'networking'
           requires:
-            - approve-prod
+            - networking-approve-prod
   eks:
     jobs:
       - plan:
-          name: plan-stg
+          name: eks-plan-stg
           environment: 'stg'
           stack: 'eks'
       - approve-stg:
           type: approval
           requires:
-            - plan-stg
+            - eks-plan-stg
       - apply:
-          name: apply-stg
+          name: eks-apply-stg
           stack: 'eks'
           requires:
             - approve-stg
       - plan:
-          name: plan-prod
+          name: eks-plan-prod
           environment: 'prod'
           stack: 'eks'
           requires:
-            - apply-stg
+            - eks-apply-stg
       - approve-prod:
           type: approval
           requires:
-            - plan-prod
+            - eks-plan-prod
       - apply:
-          name: apply-prod
+          name: eks-apply-prod
           stack: 'eks'
           requires:
             - approve-prod
+  app-a:
+    jobs:
+      - plan:
+          name: app-a-plan-stg
+          environment: 'stg'
+          stack: 'app-a'
+      - approve-stg:
+          type: approval
+          requires:
+            - app-a-plan-stg
+      - apply:
+          name: app-a-apply-stg
+          stack: 'app-a'
+          requires:
+            - approve-stg
+      - plan:
+          name: app-a-plan-prod
+          environment: 'prod'
+          stack: 'app-a'
+          requires:
+            - app-a-apply-stg
+      - approve-prod:
+          type: approval
+          requires:
+            - app-a-plan-prod
+      - apply:
+          name: app-a-apply-prod
+          stack: 'app-a'
+          requires:
+            - app-a-approve-prod
       # - plan-destroy:
       #     requires:
       #       - apply
