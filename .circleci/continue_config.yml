@@ -54,10 +54,10 @@ jobs:
           command: |
             cd week2/stacks/<< parameters.stack >>
             terraform apply -auto-approve tfapply
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
+#      - persist_to_workspace:
+#          root: .
+#          paths:
+#            - .
 
   # plan-destroy:
   #   docker:
