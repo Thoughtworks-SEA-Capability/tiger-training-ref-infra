@@ -6,7 +6,7 @@ parameters:
     default: 'ankit'
 
 jobs:
-  plan-apply:
+  plan:
     working_directory: /tmp/project
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
@@ -35,9 +35,6 @@ jobs:
             - .
 
   apply:
-    environment:
-      TF_VAR_team_name: ankit
-      TF_VAR_environment: stg
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
     steps:
@@ -82,16 +79,28 @@ workflows:
   version: 2
   networking_deploy_stg:
     jobs:
-      - plan-apply:
+      - plan:
+          name: plan-stg
           environment: 'stg'
           stack: 'networking'
-      - hold-apply:
+      - approve-stg:
           type: approval
           requires:
-            - plan-apply
+            - plan-stg
       - apply:
+          name: apply-stg
           requires:
-            - hold-apply
+            - approve-stg
+      - plan:
+          name: plan-prod
+          environment: 'prod'
+          stack: 'networking'
+          requires:
+            - apply-stg
+      - approve-prod:
+          type: approval
+          requires:
+            - plan-prod
       # - plan-destroy:
       #     requires:
       #       - apply
