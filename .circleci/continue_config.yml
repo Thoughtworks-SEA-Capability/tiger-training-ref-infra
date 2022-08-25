@@ -87,7 +87,7 @@ jobs:
 workflows:
   version: 2
   networking:
-    when: << pipelines.parameters.networking >>
+    when: << pipeline.parameters.networking >>
     jobs:
       - plan:
           name: networking-plan-stg
@@ -118,7 +118,7 @@ workflows:
           requires:
             - networking-approve-prod
   eks:
-    when: << pipelines.parameters.eks >>
+    when: << pipeline.parameters.eks >>
     jobs:
       - plan:
           name: eks-plan-stg
@@ -149,7 +149,7 @@ workflows:
           requires:
             - eks-approve-prod
   app-a:
-    when: << pipelines.parameters.app-a >>
+    when: << pipeline.parameters.app-a >>
     jobs:
       - plan:
           name: app-a-plan-stg
