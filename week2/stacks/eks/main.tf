@@ -47,7 +47,7 @@ module "eks" {
 
   vpc_id     = local.vpc_id
   control_plane_subnet_ids = local.eks_master_subnets
-  subnet_ids = local.eks_node_subnets
+  subnet_ids = local.eks_node_subnets_v2
 
   manage_aws_auth_configmap = true
   aws_auth_roles = [
