@@ -74,12 +74,12 @@ jobs:
   #           terraform apply -auto-approve tfdestroy
 workflows:
   version: 2
-  plan_approve_apply:
+  networking_deploy_stg:
     jobs:
       - plan-apply:
-          team: ankit
-          environment: stg
-          stack: networking
+          team: 'ankit'
+          environment: 'stg'
+          stack: 'networking'
       - hold-apply:
           type: approval
           requires:
