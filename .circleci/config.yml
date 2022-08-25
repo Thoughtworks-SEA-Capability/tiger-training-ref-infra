@@ -1,13 +1,16 @@
 version: 2.1
 
+parameters:
+  team:
+    type: string
+    default: 'ankit'
+
 jobs:
   plan-apply:
     working_directory: /tmp/project
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
     parameters:
-      team:
-        type: string
       environment:
         type: string
       stack:
@@ -21,8 +24,11 @@ jobs:
           name: terraform init & plan
           command: |
             cd week2/stacks/<< parameters.stack >>
-            terraform init -input=false -backend-config="key=<< parameters.team >>/<< parameters.environment >>/<< parameters.stack >>"
-            terraform plan -var-file=../../environments/<< parameters.stack >>/<< parameters.environment >>.tfvars -out tfapply
+            terraform init -input=false -backend-config="key=<< pipeline.parameters.team >>/<< parameters.environment >>/<< parameters.stack >>"
+            terraform plan \
+            -var 'team_name=<< pipeline.parameters.team >>' \
+            -var-file=../../environments/<< parameters.stack >>/<< parameters.environment >>.tfvars \
+            -out tfapply
       - persist_to_workspace:
           root: .
           paths:
@@ -77,7 +83,6 @@ workflows:
   networking_deploy_stg:
     jobs:
       - plan-apply:
-          team: 'ankit'
           environment: 'stg'
           stack: 'networking'
       - hold-apply:
