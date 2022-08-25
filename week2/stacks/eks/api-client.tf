@@ -10,7 +10,7 @@ data "aws_ssm_parameter" "eks_node_subnets" {
 }
 
 data "aws_ssm_parameter" "eks_node_subnets_v2" {
-  name = "${var.team_name}-${var.environment}-eks-node-subnets_v2"
+  name = "${var.team_name}-${var.environment}-eks-node-subnets-v2"
 }
 
 data "aws_ssm_parameter" "vpc_id" {
