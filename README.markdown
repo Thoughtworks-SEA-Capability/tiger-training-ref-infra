@@ -47,8 +47,17 @@ terraform apply --var-file=../../environments/networking/dev.tfvars
 
 ### Circle CI integration and Deploying via pipeline
 There is Circle CI integration via config at [.circleci/config.yml](circleci/config.yml) and [.circleci/continue_config.yml](.circleci/continue_config.yml). 
-1. Ensure you replace the `team` parameter in [.circleci/continue_config](.circleci/continue_config.yml) to your unique team name
-
+1. Fork this repository
+   1. Ensure your forked repository is in the https://github.com/Thoughtworks-SEA-Capability Org. If
+   you are not a member of this Org, please ask Ankit to add you. 
+   2. Recommended to pre-fix your repo name with your team name eg. 'lion-infra-training-ref-infra'
+2. **Incase needed** `git reset` to the tag/commit shared in the Trello Card, to ensure you are at the correct working version of the code.
+   This should give you a fresh working environment for week 2, even in the case I'm pushing to the upstream asynchronously. 
+```bash
+git reset --hard <commit>
+git push -f
+```
+3. Ensure you replace the `team` parameter in [.circleci/continue_config](.circleci/continue_config.yml) to your unique team name
 ```yaml
 version: 2.1
 
@@ -56,7 +65,17 @@ parameters:
   team:
     type: string
     default: '<team-name>'
-```
+``` 
+4. Create a free account in 'https://app.circleci.com/', with your Github credentials.
+   1. At this point you should be able to see the **Thoughtworks-SEA-Capability** Org and it's projects. 
+   2. You should be able to see your repo as a Project.
+5. Click on "Setup Project" for your repo. (Ref image attached in Trello Card)
+   1. in "Select your config.yml file" select the **Fastest** option
+   2. select the 'main' branch.
+6. Enable option - Project Settings > Advanced > Enable dynamic config using setup workflows.
+   (Ref image attached in Trello Card) 
+7. Try pushing some small change, adding an output, to networking or eks stacks to validate pipelines work.
+
 
 --- 
 # Week 1
