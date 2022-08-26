@@ -16,12 +16,6 @@ resource "aws_ssm_parameter" "eks_node_subnets" {
   type  = "String"
 }
 
-resource "aws_ssm_parameter" "eks_node_subnets_v2" {
-  name  = "${var.team_name}-${var.environment}-eks-node-subnets-v2"
-  value = jsonencode(slice(module.vpc.private_subnets,6,9))
-  type  = "String"
-}
-
 resource "aws_ssm_parameter" "vpc_id" {
   name  = "${var.team_name}-${var.environment}-vpc-id"
   type  = "String"

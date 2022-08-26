@@ -36,8 +36,6 @@ module "vpc" {
     "10.0.104.0/24", "10.0.105.0/24", "10.0.106.0/24",
     # Private subnets for EKS Nodes
     "10.0.108.0/23", "10.0.110.0/23", "10.0.112.0/23",
-    # Private subnets for EKS Nodes v2
-    "10.0.120.0/21", "10.0.128.0/21", "10.0.136.0/21",
   ]
   private_subnet_tags = merge(local.tags, {
     Name = "${local.name}-private"
