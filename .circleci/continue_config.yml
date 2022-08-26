@@ -54,36 +54,7 @@ jobs:
           command: |
             cd week2/stacks/<< parameters.stack >>
             terraform apply -auto-approve tfapply
-#      - persist_to_workspace:
-#          root: .
-#          paths:
-#            - .
 
-  # plan-destroy:
-  #   docker:
-  #     - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
-  #   steps:
-  #     - attach_workspace:
-  #         at: .
-  #     - run:
-  #         name: terraform create destroy plan
-  #         command: |
-  #           terraform plan -destroy -out tfdestroy -var-file terraform.tfvars
-  #     - persist_to_workspace:
-  #         root: .
-  #         paths:
-  #           - .
-
-  # destroy:
-  #   docker:
-  #     - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
-  #   steps:
-  #     - attach_workspace:
-  #         at: .
-  #     - run:
-  #         name: terraform destroy
-  #         command: |
-  #           terraform apply -auto-approve tfdestroy
 workflows:
   version: 2
   networking:
@@ -124,68 +95,19 @@ workflows:
           name: eks-plan-stg
           environment: 'stg'
           stack: 'eks'
-      - eks-approve-stg:
-          type: approval
-          requires:
-            - eks-plan-stg
       - apply:
           name: eks-apply-stg
           stack: 'eks'
           requires:
-            - eks-approve-stg
+            - eks-plan-stg
       - plan:
           name: eks-plan-prod
           environment: 'prod'
           stack: 'eks'
           requires:
             - eks-apply-stg
-      - eks-approve-prod:
-          type: approval
-          requires:
-            - eks-plan-prod
       - apply:
           name: eks-apply-prod
           stack: 'eks'
           requires:
             - eks-approve-prod
-  app-a:
-    when: << pipeline.parameters.app-a >>
-    jobs:
-      - plan:
-          name: app-a-plan-stg
-          environment: 'stg'
-          stack: 'app-a'
-      - app-a-approve-stg:
-          type: approval
-          requires:
-            - app-a-plan-stg
-      - apply:
-          name: app-a-apply-stg
-          stack: 'app-a'
-          requires:
-            - app-a-approve-stg
-      - plan:
-          name: app-a-plan-prod
-          environment: 'prod'
-          stack: 'app-a'
-          requires:
-            - app-a-apply-stg
-      - app-a-approve-prod:
-          type: approval
-          requires:
-            - app-a-plan-prod
-      - apply:
-          name: app-a-apply-prod
-          stack: 'app-a'
-          requires:
-            - app-a-approve-prod
-      # - plan-destroy:
-      #     requires:
-      #       - apply
-      # - hold-destroy:
-      #     type: approval
-      #     requires:
-      #       - plan-destroy
-      # - destroy:
-      #     requires:
-      #       - hold-destroy
