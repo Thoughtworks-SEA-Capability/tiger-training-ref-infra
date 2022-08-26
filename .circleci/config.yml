@@ -23,6 +23,7 @@ workflows:
             week2/stacks/networking/.* networking true
             week2/stacks/eks/.* eks true
             week2/stacks/app-a/.* app-a true
+            .circleci/.* pipeline-config true
           base-revision: main
           # this is the path of the configuration we should trigger once
           # path filtering and pipeline parameter value updates are

@@ -4,6 +4,9 @@ parameters:
   team:
     type: string
     default: 'ankit'
+  pipeline-config:
+    type: boolean
+    default: false
   networking:
     type: boolean
     default: false
@@ -58,7 +61,11 @@ jobs:
 workflows:
   version: 2
   networking:
-    when: << pipeline.parameters.networking >>
+    when:
+      condition:
+        or:
+          - << pipeline.parameters.pipeline-config >>
+          - << pipeline.parameters.networking >>
     jobs:
       - plan:
           name: networking-plan-stg
@@ -89,7 +96,11 @@ workflows:
           requires:
             - networking-approve-prod
   eks:
-    when: << pipeline.parameters.eks >>
+    when:
+      condition:
+        or:
+          - << pipeline.parameters.pipeline-config >>
+          - << pipeline.parameters.eks >>
     jobs:
       - plan:
           name: eks-plan-stg
@@ -110,4 +121,4 @@ workflows:
           name: eks-apply-prod
           stack: 'eks'
           requires:
-            - eks-approve-prod
+            - eks-plan-prod
