@@ -1,5 +1,10 @@
 # this file contains the configuration for the actual pipelines for each of the stacks itself.
+
 version: 2.1
+
+default-context: &default-context
+  context:
+    - iat-aws
 
 parameters:
   team:
@@ -74,6 +79,7 @@ workflows:
     jobs:
       - plan:
           name: networking-plan-stg
+          <<: *default-context
           environment: 'stg'
           stack: 'networking'
       - networking-approve-stg:
@@ -82,11 +88,13 @@ workflows:
             - networking-plan-stg
       - apply:
           name: networking-apply-stg
+          <<: *default-context
           stack: 'networking'
           requires:
             - networking-approve-stg
       - plan:
           name: networking-plan-prod
+          <<: *default-context
           environment: 'prod'
           stack: 'networking'
           requires:
@@ -97,6 +105,7 @@ workflows:
             - networking-plan-prod
       - apply:
           name: apply-prod
+          <<: *default-context
           stack: 'networking'
           requires:
             - networking-approve-prod
@@ -109,21 +118,25 @@ workflows:
     jobs:
       - plan:
           name: eks-plan-stg
+          <<: *default-context
           environment: 'stg'
           stack: 'eks'
       - apply:
           name: eks-apply-stg
+          <<: *default-context
           stack: 'eks'
           requires:
             - eks-plan-stg
       - plan:
           name: eks-plan-prod
+          <<: *default-context
           environment: 'prod'
           stack: 'eks'
           requires:
             - eks-apply-stg
       - apply:
           name: eks-apply-prod
+          <<: *default-context
           stack: 'eks'
           requires:
             - eks-plan-prod
