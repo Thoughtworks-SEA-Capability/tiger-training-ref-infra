@@ -47,7 +47,16 @@ terraform apply --var-file=../../environments/networking/dev.tfvars
 
 ### Circle CI integration and Deploying via pipeline
 There is Circle CI integration via config at [.circleci/config.yml](circleci/config.yml) and [.circleci/continue_config.yml](.circleci/continue_config.yml). 
+1. Ensure you replace the `team` parameter in [.circleci/continue_config](.circleci/continue_config.yml) to your unique team name
 
+```yaml
+version: 2.1
+
+parameters:
+  team:
+    type: string
+    default: '<team-name>'
+```
 
 --- 
 # Week 1
