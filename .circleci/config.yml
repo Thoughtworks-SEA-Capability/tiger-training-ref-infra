@@ -1,3 +1,6 @@
+# this file contains path filtering configuration that allows us to trigger the pipeline for the relevant stack.
+# eg. if the code change is at week2/networking/.* then only the networking pipeline will be triggered.
+# if the code change is at .circleci/.* then all pipelines are triggered
 version: 2.1
 
 # this allows you to use CircleCI's dynamic configuration feature

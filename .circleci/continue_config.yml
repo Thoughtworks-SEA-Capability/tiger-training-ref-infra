@@ -1,3 +1,4 @@
+# this file contains the configuration for the actual pipelines for each of the stacks itself.
 version: 2.1
 
 parameters:
@@ -17,6 +18,7 @@ parameters:
     type: boolean
     default: false
 
+# these are re-usable jobs that are re-used with relevant parameters for each of the stacks.
 jobs:
   plan:
     working_directory: /tmp/project
@@ -58,6 +60,9 @@ jobs:
             cd week2/stacks/<< parameters.stack >>
             terraform apply -auto-approve tfapply
 
+# workflows are pipelines that are conditionally triggered depending of the on the pipeline.parameters
+# pipeline.parameters are passed down from the config.yml depending on the path of the code change
+# workflows invoke re-usable jobs with relevant parameters
 workflows:
   version: 2
   networking:
