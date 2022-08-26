@@ -90,16 +90,3 @@ resource "kubernetes_secret_v1" "app-a-rds-creds" {
     db_password = module.cluster.cluster_master_password,
   }
 }
-
-resource "kubernetes_secret_v1" "app-a-rds-creds_v2" {
-  metadata {
-    name      = "${local.stack}-db"
-    namespace = local.application_namespace_v2
-  }
-  data = {
-    db_name     = module.cluster.cluster_database_name,
-    db_endpoint = module.cluster.cluster_endpoint,
-    db_username = module.cluster.cluster_master_username,
-    db_password = module.cluster.cluster_master_password,
-  }
-}
