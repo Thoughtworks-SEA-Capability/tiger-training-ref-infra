@@ -47,7 +47,7 @@ module "eks" {
 
   vpc_id     = local.vpc_id
   control_plane_subnet_ids = local.eks_master_subnets
-  subnet_ids = local.eks_node_subnets_v2
+  subnet_ids = local.eks_node_subnets
 
   manage_aws_auth_configmap = true
   aws_auth_roles = [
@@ -215,7 +215,6 @@ provider "kubernetes" {
 
 locals {
   application_ns_name = "application"
-  application_ns_name_v2 = "workloads"
 }
 resource "kubernetes_namespace_v1" "application" {
   metadata {
@@ -223,13 +222,5 @@ resource "kubernetes_namespace_v1" "application" {
       owner = "terraform"
     })
     name = local.application_ns_name
-  }
-}
-resource "kubernetes_namespace_v1" "application_v2" {
-  metadata {
-    labels = merge(local.tags,{
-      owner = "terraform"
-    })
-    name = local.application_ns_name_v2
   }
 }

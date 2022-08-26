@@ -6,12 +6,6 @@ resource "aws_ssm_parameter" "application_namespace" {
   type  = "String"
 }
 
-resource "aws_ssm_parameter" "application_namespace_v2" {
-  name  = "${var.team_name}-${var.environment}-application-namespace-v2"
-  value = local.application_ns_name_v2
-  type  = "String"
-}
-
 resource "aws_ssm_parameter" "cluster_primary_security_group_id" {
   name  = "${var.team_name}-${var.environment}-cluster-primary-security-group-id"
   value = module.eks.cluster_primary_security_group_id
