@@ -120,7 +120,7 @@ workflows:
           environment: 'stg'
           stack: 'eks'
           requires:
-            - networking-approve
+            - networking-approve-stg
       - apply:
           name: eks-apply-stg
           <<: *default-context
@@ -163,7 +163,6 @@ workflows:
           stack: 'app-a'
           requires:
             - eks-approve-stg
-            - eks-apply-stg
       - apply:
           name: app-a-apply-stg
           <<: *default-context
