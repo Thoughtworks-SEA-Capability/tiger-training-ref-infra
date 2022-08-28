@@ -82,10 +82,6 @@ workflows:
           <<: *default-context
           environment: 'stg'
           stack: 'networking'
-      - networking-approve-stg:
-          type: approval
-          requires:
-            - networking-plan-stg
       - apply:
           name: networking-apply-stg
           <<: *default-context
@@ -134,9 +130,48 @@ workflows:
           stack: 'eks'
           requires:
             - eks-apply-stg
+      - eks-approve-prod:
+          type: approval
+          requires:
+            - eks-plan-prod
       - apply:
           name: eks-apply-prod
           <<: *default-context
           stack: 'eks'
           requires:
             - eks-plan-prod
+  app-a:
+    when:
+      condition:
+        or:
+          - << pipeline.parameters.pipeline-config >>
+          - << pipeline.parameters.app-a >>
+    jobs:
+      - plan:
+          name: app-a-plan-stg
+          <<: *default-context
+          environment: 'stg'
+          stack: 'app-a'
+      - apply:
+          name: app-a-apply-stg
+          <<: *default-context
+          stack: 'app-a'
+          requires:
+            - app-a-plan-stg
+      - plan:
+          name: app-a-plan-prod
+          <<: *default-context
+          environment: 'prod'
+          stack: 'app-a'
+          requires:
+            - app-a-apply-stg
+      - app-a-approve-prod:
+          type: approval
+          requires:
+            - app-a-plan-prod
+      - apply:
+          name: app-a-apply-prod
+          <<: *default-context
+          stack: 'app-a'
+          requires:
+            - app-a-plan-prod
