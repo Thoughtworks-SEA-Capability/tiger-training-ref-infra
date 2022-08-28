@@ -87,7 +87,7 @@ workflows:
           <<: *default-context
           stack: 'networking'
           requires:
-            - networking-approve-stg
+            - networking-plan-stg
       - plan:
           name: networking-plan-prod
           <<: *default-context
@@ -100,7 +100,7 @@ workflows:
           requires:
             - networking-plan-prod
       - apply:
-          name: apply-prod
+          name: networking-apply-prod
           <<: *default-context
           stack: 'networking'
           requires:
@@ -139,7 +139,7 @@ workflows:
           <<: *default-context
           stack: 'eks'
           requires:
-            - eks-plan-prod
+            - eks-approve-prod
   app-a:
     when:
       condition:
