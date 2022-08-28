@@ -1,7 +1,7 @@
 locals {
   tags = {
     stack = "bootstrap",
-    team = "ankit",
+    team = "tiger",
     environment = "global"
   }
 }
