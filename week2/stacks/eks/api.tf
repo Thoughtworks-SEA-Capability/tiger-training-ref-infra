@@ -17,3 +17,10 @@ resource "aws_ssm_parameter" "eks_cluster_id" {
   type  = "String"
   value = module.eks.cluster_id
 }
+
+resource "aws_ssm_parameter" "cluster_admin_role" {
+  name  = "${var.team_name}-${var.environment}-cluster-admin-role"
+  value = aws_iam_role.eks-admin.arn
+  type  = "String"
+}
+
