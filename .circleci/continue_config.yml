@@ -121,16 +121,12 @@ workflows:
           <<: *default-context
           environment: 'stg'
           stack: 'eks'
-      - eks-approve-stg:
-          type: approval
-          requires:
-            - eks-plan-stg
       - apply:
           name: eks-apply-stg
           <<: *default-context
           stack: 'eks'
           requires:
-            - eks-approve-stg
+            - eks-plan-stg
       - plan:
           name: eks-plan-prod
           <<: *default-context
