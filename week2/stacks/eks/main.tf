@@ -208,10 +208,10 @@ data "aws_eks_cluster_auth" "default" {
 }
 
 provider "kubernetes" {
-  alias                  = "secret_creator"
+#  alias                  = "secret_creator"
   host                   = data.aws_eks_cluster.default.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.default.certificate_authority[0].data)
-    token                  = data.aws_eks_cluster_auth.default.token
+  token                  = data.aws_eks_cluster_auth.default.token
 #  exec {
 #    api_version = "client.authentication.k8s.io/v1alpha1"
 #    args        = [ "eks", "get-token", "--cluster-name", local.name, "--role-arn", aws_iam_role.eks-admin.arn ]
