@@ -208,24 +208,17 @@ data "aws_eks_cluster_auth" "default" {
 }
 
 provider "kubernetes" {
-  alias                  = "secret_creator"
   host                   = data.aws_eks_cluster.default.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.default.certificate_authority[0].data)
-  #  token                  = data.aws_eks_cluster_auth.default.token
-  exec {
-    api_version = "client.authentication.k8s.io/v1alpha1"
-    args        = [ "eks", "get-token", "--cluster-name", local.name, "--role-arn", aws_iam_role.eks-admin.arn ]
-    command     = "aws"
-  }
+  token                  = data.aws_eks_cluster_auth.default.token
 }
 
 locals {
   application_ns_name = "application"
 }
 resource "kubernetes_namespace_v1" "application" {
-  provider = kubernetes.secret_creator
   metadata {
-    labels = merge(local.tags, {
+    labels = merge(local.tags,{
       owner = "terraform"
     })
     name = local.application_ns_name
