@@ -231,7 +231,7 @@ locals {
 
 resource "kubernetes_namespace_v1" "application" {
   metadata {
-    labels = merge(local.tags, {
+    labels = merge(local.tags,{
       owner = "terraform"
     })
     name = local.application_ns_name

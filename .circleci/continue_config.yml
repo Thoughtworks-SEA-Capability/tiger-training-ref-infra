@@ -28,7 +28,7 @@ jobs:
   plan:
     working_directory: /tmp/project
     docker:
-      - image: ankitwal/iat-terraform-aws:v0.1.0
+      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
     parameters:
       environment:
         type: string
@@ -52,7 +52,7 @@ jobs:
 
   apply:
     docker:
-      - image: ankitwal/iat-terraform-aws:v0.1.0
+      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
     parameters:
       stack:
         type: string
