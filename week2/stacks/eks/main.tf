@@ -13,7 +13,7 @@ locals {
 data "aws_caller_identity" "current" {}
 
 module "eks" {
-  source = "terraform-aws-modules/eks/aws"
+  source  = "terraform-aws-modules/eks/aws"
   version = "18.26.2"
 
   cluster_name                    = local.name
@@ -45,9 +45,9 @@ module "eks" {
     Name = local.name
   })
 
-  vpc_id     = local.vpc_id
+  vpc_id                   = local.vpc_id
   control_plane_subnet_ids = local.eks_master_subnets
-  subnet_ids = local.eks_node_subnets
+  subnet_ids               = local.eks_node_subnets
 
   manage_aws_auth_configmap = true
   aws_auth_roles = [
@@ -181,8 +181,8 @@ resource "aws_iam_policy" "node_additional" {
 
 
 resource "aws_iam_role" "eks-admin" {
-  name = "${local.name}-eks-admin"
-  description = "Role to assume to administer the cluster"
+  name               = "${local.name}-eks-admin"
+  description        = "Role to assume to administer the cluster"
   assume_role_policy = data.aws_iam_policy_document.assume-eks-admin.json
 }
 
@@ -192,7 +192,7 @@ data "aws_iam_policy_document" "assume-eks-admin" {
     actions = ["sts:AssumeRole"]
     principals {
       type        = "AWS"
-      identifiers = [format("arn:aws:iam::%s:root",data.aws_caller_identity.current.account_id)]
+      identifiers = [format("arn:aws:iam::%s:root", data.aws_caller_identity.current.account_id)]
     }
   }
 }
