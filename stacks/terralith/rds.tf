@@ -52,7 +52,7 @@ resource "aws_rds_cluster_parameter_group" "db" {
 }
 
 // This secret name is sort of like config store for infra to pass on data to the application layer
-// The name is agreed on by convention, changing the name will break the test and whatever subsequent applications
+// The name is agreed on by convention, changing the name will break the test and whatever subsequent application
 resource "kubernetes_secret_v1" "app-a-rds-creds" {
   metadata {
     name = "app-a-db"
