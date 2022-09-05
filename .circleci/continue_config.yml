@@ -117,8 +117,6 @@ workflows:
           <<: *default-context
           environment: 'stg'
           stack: 'eks'
-          requires:
-            - networking-approve-stg
       - apply:
           name: eks-apply-stg
           <<: *default-context
@@ -131,7 +129,6 @@ workflows:
           environment: 'prod'
           stack: 'eks'
           requires:
-            - networking-approve-prod
             - eks-apply-stg
       - eks-approve-prod:
           type: approval
@@ -155,8 +152,6 @@ workflows:
           <<: *default-context
           environment: 'stg'
           stack: 'app-a'
-          requires:
-            - eks-approve-stg
       - apply:
           name: app-a-apply-stg
           <<: *default-context
@@ -169,7 +164,6 @@ workflows:
           environment: 'prod'
           stack: 'app-a'
           requires:
-            - eks-approve-prod
             - app-a-apply-stg
       - app-a-approve-prod:
           type: approval
