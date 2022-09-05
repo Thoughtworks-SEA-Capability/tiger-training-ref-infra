@@ -21,7 +21,7 @@ console: init
 	${ENV_VAR} terraform -chdir=${TF_PATH}/${STACK} console -var-file=./../../environments/${STACK}/${ENV}.tfvars
 
 destroy: init
-	${ENV_VAR} terraform -chdir=${TF_PATH}/${STACK} destory -var-file=./../../environments/${STACK}/${ENV}.tfvars
+	${ENV_VAR} terraform -chdir=${TF_PATH}/${STACK} destroy -var-file=./../../environments/${STACK}/${ENV}.tfvars
 
 destroy-all:
 	# week2 - app-a
