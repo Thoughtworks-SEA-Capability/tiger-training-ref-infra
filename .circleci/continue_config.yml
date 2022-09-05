@@ -51,6 +51,7 @@ jobs:
             - .
 
   apply:
+    working_directory: /tmp/project
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
     parameters:
