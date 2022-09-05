@@ -12,11 +12,6 @@ locals {
 data "aws_availability_zones" "azs" {
 }
 
-resource "aws_subnet" "tmp" {
-  count = 3
-  vpc_id = module.vpc.vpc_id
-}
-
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
   # fixing to exact version, will prevent need for packaging
@@ -40,7 +35,6 @@ module "vpc" {
     "10.0.104.0/24", "10.0.105.0/24", "10.0.106.0/24",
     # Private subnets for EKS Nodes
     "10.0.120.0/21", "10.0.128.0/21", "10.0.136.0/21",
-    "10.0.108.0/23", "10.0.110.0/23", "10.0.112.0/23"
   ]
   private_subnet_tags = merge(local.tags, {
     Name = "${local.name}-private"
