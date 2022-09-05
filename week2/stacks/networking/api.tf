@@ -12,7 +12,7 @@ resource "aws_ssm_parameter" "eks_master_subnets" {
 
 resource "aws_ssm_parameter" "eks_node_subnets" {
   name  = "${var.team_name}-${var.environment}-eks-node-subnets"
-  value = jsonencode(slice(module.vpc.private_subnets,6,9))
+  value = jsonencode(slice(module.vpc.private_subnets,3,6))
   type  = "String"
 }
 
