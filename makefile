@@ -20,7 +20,7 @@ validate:
 	terraform -chdir=${TF_PATH} validate
 
 test:
-	cd tests && go test 
+	cd week2/tests && go test 
 
 update-eks:
 	./update-eks.sh
