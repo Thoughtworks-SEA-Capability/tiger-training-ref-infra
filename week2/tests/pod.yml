@@ -8,6 +8,6 @@ spec:
       image: 911960542707.dkr.ecr.ap-southeast-1.amazonaws.com/infra-training-test-pod:v1
       envFrom:
         - secretRef:
-            name: "tiger-stg-app-a-db"
+            name: "app-a-db"
       command: [ "/bin/sh", "-c", "--" ]
       args: [ "sleep 3600" ]
