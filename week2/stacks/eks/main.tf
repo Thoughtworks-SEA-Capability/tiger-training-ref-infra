@@ -13,7 +13,7 @@ locals {
 data "aws_caller_identity" "current" {}
 
 module "eks" {
-  source = "terraform-aws-modules/eks/aws"
+  source  = "terraform-aws-modules/eks/aws"
   version = "18.26.2"
 
   cluster_name                    = local.name
@@ -45,9 +45,9 @@ module "eks" {
     Name = local.name
   })
 
-  vpc_id     = local.vpc_id
+  vpc_id                   = local.vpc_id
   control_plane_subnet_ids = local.eks_master_subnets
-  subnet_ids = local.eks_node_subnets
+  subnet_ids               = local.eks_node_subnets
 
   manage_aws_auth_configmap = true
   aws_auth_roles = [
@@ -181,8 +181,8 @@ resource "aws_iam_policy" "node_additional" {
 
 
 resource "aws_iam_role" "eks-admin" {
-  name = "${local.name}-eks-admin"
-  description = "Role to assume to administer the cluster"
+  name               = "${local.name}-eks-admin"
+  description        = "Role to assume to administer the cluster"
   assume_role_policy = data.aws_iam_policy_document.assume-eks-admin.json
 }
 
@@ -192,7 +192,7 @@ data "aws_iam_policy_document" "assume-eks-admin" {
     actions = ["sts:AssumeRole"]
     principals {
       type        = "AWS"
-      identifiers = [format("arn:aws:iam::%s:root",data.aws_caller_identity.current.account_id)]
+      identifiers = [format("arn:aws:iam::%s:root", data.aws_caller_identity.current.account_id)]
     }
   }
 }
@@ -207,15 +207,28 @@ data "aws_eks_cluster_auth" "default" {
   name = module.eks.cluster_id
 }
 
+variable "change_ci_created_stack_from_local" {
+  default     = false
+  description = "Useful run terraform for ci created K8s resources from local. "
+}
+
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.default.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.default.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.default.token
+  exec {
+    api_version = "client.authentication.k8s.io/v1alpha1"
+    args = concat(
+      ["eks", "get-token", "--cluster-name", local.name],
+      var.change_ci_created_stack_from_local ? ["--role-arn", aws_iam_role.eks-admin.arn] : []
+    )
+    command = "aws"
+  }
 }
 
 locals {
   application_ns_name = "application"
 }
+
 resource "kubernetes_namespace_v1" "application" {
   metadata {
     labels = merge(local.tags,{
