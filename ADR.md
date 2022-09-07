@@ -1,3 +1,5 @@
+WEEK2-07#2022-09-07, Change locals application_ns_name in app-a
+WEEK2-06#2022-09-07, Change locals application_ns_name in eks from "application" to "workload"
 WEEK2-05#2022-09-07, Add namespace "workload" and create resources based on new namespace [Apply eks and app-a]
 WEEK2-04#2022-09-07, 
 - Remove the old EKS private subnet from list
