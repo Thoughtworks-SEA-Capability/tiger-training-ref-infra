@@ -1,3 +1,4 @@
+WEEK2-08#2022-09-07, Delete kubernetes_namespace_v1 and kubernetes_secret_v1 that use ns application
 WEEK2-07#2022-09-07, Change locals application_ns_name in app-a
 WEEK2-06#2022-09-07, Change locals application_ns_name in eks from "application" to "workload"
 WEEK2-05#2022-09-07, Add namespace "workload" and create resources based on new namespace [Apply eks and app-a]

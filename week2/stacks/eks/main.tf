@@ -230,15 +230,6 @@ locals {
   application_ns_name = "workload"
 }
 
-resource "kubernetes_namespace_v1" "application" {
-  metadata {
-    labels = merge(local.tags,{
-      owner = "terraform"
-    })
-    name = "application"
-  }
-}
-
 resource "kubernetes_namespace_v1" "workload" {
   metadata {
     labels = merge(local.tags,{
