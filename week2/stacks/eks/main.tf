@@ -220,10 +220,7 @@ provider "kubernetes" {
     for_each = var.change_ci_created_stack_from_local ? [1] : []
     content {
       api_version = "client.authentication.k8s.io/v1alpha1"
-      args = concat(
-        ["eks", "get-token", "--cluster-name", local.name],
-        var.change_ci_created_stack_from_local ? ["--role-arn", aws_iam_role.eks-admin.arn] : []
-      )
+      args = ["eks", "get-token", "--cluster-name", local.name, "--role-arn", aws_iam_role.eks-admin.arn]
       command = "aws"
     }
   }
