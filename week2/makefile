@@ -47,7 +47,7 @@ validate:
 	terraform -chdir=${TF_PATH}/${STACK} validate
 
 test:
-	cd tests && go test 
+	cd tests && go test -v
 
 update-eks:
 	./update-eks.sh
