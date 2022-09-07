@@ -73,12 +73,20 @@ data "aws_eks_cluster_auth" "default" {
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.default.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.default.certificate_authority[0].data)
-  # exec {
-  #   api_version = "client.authentication.k8s.io/v1alpha1"
-  #   args        = ["eks", "get-token", "--cluster-name", data.aws_eks_cluster.default.name, "--role-arn", data.aws_ssm_parameter.eks_admin_role.value]
-  #   command     = "aws"
-  # }
-  token                  = data.aws_eks_cluster_auth.default.token
+
+  dynamic exec {
+    for_each = var.change_ci_created_stack_from_local ? [1] : []
+    content {
+      api_version = "client.authentication.k8s.io/v1alpha1"
+      args = concat(
+        ["eks", "get-token", "--cluster-name", local.name],
+        var.change_ci_created_stack_from_local ? ["--role-arn", aws_iam_role.eks-admin.arn] : []
+      )
+      command = "aws"
+    }
+  }
+
+  token                  = var.change_ci_created_stack_from_local ? null : data.aws_eks_cluster_auth.default.token
 }
 
 // This secret name is sort of like config store for infra to pass on data to the application layer
