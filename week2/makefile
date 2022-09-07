@@ -26,18 +26,15 @@ destroy: init
 destroy-all:
 	# week2 - app-a
 	terraform -chdir=${TF_PATH}/app-a init -backend-config="key=${TF_VAR_team_name}/stg/app-a" -reconfigure
-	${ENV_VAR} terraform -chdir=${TF_PATH}/app-a destroy -var-file=./../../environments/app-a/stg.tfvars
+	${ENV_VAR} terraform -chdir=${TF_PATH}/app-a destroy -var-file=./../../environments/app-a/stg.tfvars -auto-approve
 
 	# week2 - eks
 	terraform -chdir=${TF_PATH}/eks init -backend-config="key=${TF_VAR_team_name}/stg/eks" -reconfigure
-	${ENV_VAR} terraform -chdir=${TF_PATH}/eks destroy -var-file=./../../environments/eks/stg.tfvars
+	${ENV_VAR} terraform -chdir=${TF_PATH}/eks destroy -var-file=./../../environments/eks/stg.tfvars -auto-approve
 
 	# week2 - networking
 	terraform -chdir=${TF_PATH}/networking init -backend-config="key=${TF_VAR_team_name}/stg/networking" -reconfigure
-	${ENV_VAR} terraform -chdir=${TF_PATH}/networking destroy -var-file=./../../environments/networking/stg.tfvars
-
-	# week1
-	# terraform -chdir=${TF_PATH} destroy --var-file=dev.tfvars
+	${ENV_VAR} terraform -chdir=${TF_PATH}/networking destroy -var-file=./../../environments/networking/stg.tfvars -auto-approve
 
 fmt:
 	terraform -chdir=${TF_PATH} fmt -recursive
@@ -46,7 +43,7 @@ fmt:
 validate:
 	terraform -chdir=${TF_PATH}/${STACK} validate
 
-test:
+test: update-eks
 	cd tests && go test -v
 
 update-eks:
