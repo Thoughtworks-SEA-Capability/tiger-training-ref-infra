@@ -27,7 +27,7 @@ workflows:
             week2/stacks/eks/.* eks true
             week2/stacks/app-a/.* app-a true
             .circleci/.* pipeline-config true
-          base-revision: main
+          base-revision: week2-fix
           # this is the path of the configuration we should trigger once
           # path filtering and pipeline parameter value updates are
           # complete. In this case, we are using the parent dynamic
