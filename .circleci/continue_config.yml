@@ -40,6 +40,7 @@ jobs:
           name: terraform lint
           command: |
             cd week2/stacks/<< parameters.stack >>
+            tflint --init
             tflint
   plan:
     working_directory: /tmp/project
