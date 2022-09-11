@@ -25,6 +25,22 @@ parameters:
 
 # these are re-usable jobs that are re-used with relevant parameters for each of the stacks.
 jobs:
+  lint:
+    working_directory: /data
+    docker:
+      - image: ghcr.io/terraform-linters/tflint:v0.40.0
+    parameters:
+      environment:
+        type: string
+      stack:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: terraform lint
+          command: |
+            cd week2/stacks/<< parameters.stack >>
+            tflint
   plan:
     working_directory: /tmp/project
     docker:
@@ -77,11 +93,18 @@ workflows:
           - << pipeline.parameters.pipeline-config >>
           - << pipeline.parameters.networking >>
     jobs:
+      - lint:
+          name: networking-lint
+          <<: *default-context
+          environment: 'stg'
+          stack: 'networking'
       - plan:
           name: networking-plan-stg
           <<: *default-context
           environment: 'stg'
           stack: 'networking'
+          requires:
+            - networking-lint
       - networking-approve-stg:
           type: approval
           requires:
