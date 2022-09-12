@@ -9,6 +9,8 @@ terraform {
       version = "~> 4.27.0"
     }
   }
+  #tflint-fix
+  required_version = "~> 1.2.1"
 }
 
 provider "aws" {
