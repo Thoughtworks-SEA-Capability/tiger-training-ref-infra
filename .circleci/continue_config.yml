@@ -163,11 +163,18 @@ workflows:
           - << pipeline.parameters.pipeline-config >>
           - << pipeline.parameters.eks >>
     jobs:
+      - sec:
+          name: eks-sec
+          <<: *default-context
+          environment: 'stg'
+          stack: 'eks'
       - plan:
           name: eks-plan-stg
           <<: *default-context
           environment: 'stg'
           stack: 'eks'
+          requires:
+            - eks-sec
       - eks-approve-stg:
           type: approval
           requires:
