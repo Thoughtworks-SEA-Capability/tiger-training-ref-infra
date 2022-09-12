@@ -54,12 +54,11 @@ jobs:
     steps:
       - checkout
       - run:
-          name: terraform lint
+          name: terraform sec
           command: |
             cd week2/stacks/<< parameters.stack >>
             terraform init -input=false -backend-config="key=<< pipeline.parameters.team >>/<< parameters.environment >>/<< parameters.stack >>"
             tfsec
-
   plan:
     working_directory: /tmp/project
     docker:
@@ -84,7 +83,6 @@ jobs:
           root: .
           paths:
             - .
-
   apply:
     docker:
       - image: ankitwal/iat-terraform-aws:v0.1.0
@@ -112,11 +110,11 @@ workflows:
           - << pipeline.parameters.pipeline-config >>
           - << pipeline.parameters.networking >>
     jobs:
-#      - lint:
-#          name: networking-lint
-#          <<: *default-context
-#          environment: 'stg'
-#          stack: 'networking'
+      - lint:
+          name: networking-lint
+          <<: *default-context
+          environment: 'stg'
+          stack: 'networking'
       - sec:
           name: networking-sec
           <<: *default-context
@@ -129,6 +127,7 @@ workflows:
           stack: 'networking'
           requires:
             - networking-sec
+            - networking-lint
       - networking-approve-stg:
           type: approval
           requires:
@@ -163,6 +162,11 @@ workflows:
           - << pipeline.parameters.pipeline-config >>
           - << pipeline.parameters.eks >>
     jobs:
+      - lint:
+          name: eks-lint
+          <<: *default-context
+          environment: 'stg'
+          stack: 'eks'
       - sec:
           name: eks-sec
           <<: *default-context
@@ -175,6 +179,7 @@ workflows:
           stack: 'eks'
           requires:
             - eks-sec
+            - eks-lint
       - eks-approve-stg:
           type: approval
           requires:
@@ -209,6 +214,11 @@ workflows:
           - << pipeline.parameters.pipeline-config >>
           - << pipeline.parameters.app-a>>
     jobs:
+      - lint:
+          name: app-a-lint
+          <<: *default-context
+          environment: 'stg'
+          stack: 'app-a'
       - sec:
           name: app-a-sec
           <<: *default-context
@@ -221,6 +231,7 @@ workflows:
           stack: 'app-a'
           requires:
             - app-a-sec
+            - app-a-lint
       - app-a-approve-stg:
           type: approval
           requires:
