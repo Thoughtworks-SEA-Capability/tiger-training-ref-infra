@@ -66,16 +66,19 @@ data "aws_eks_cluster" "default" {
   name = local.eks_cluster_id
 }
 
-data "aws_eks_cluster_auth" "default" {
-  name = local.eks_cluster_id
-}
+#tflint-fix
+#data "aws_eks_cluster_auth" "default" {
+#  name = local.eks_cluster_id
+#}
 
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.default.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.default.certificate_authority[0].data)
   exec {
     api_version = "client.authentication.k8s.io/v1alpha1"
-    args        = ["eks", "get-token", "--cluster-name", data.aws_eks_cluster.default.name, "--role-arn", data.aws_ssm_parameter.eks_admin_role.value]
+#    args        = ["eks", "get-token", "--cluster-name", data.aws_eks_cluster.default.name, "--role-arn", data.aws_ssm_parameter.eks_admin_role.value]
+    #tflint-fix
+    args        = ["eks", "get-token", "--cluster-name", data.aws_eks_cluster.default.name, "--role-arn", local.eks_admin_role]
     command     = "aws"
   }
 }
