@@ -42,6 +42,24 @@ jobs:
             cd week2/stacks/<< parameters.stack >>
             tflint --init
             tflint
+  sec:
+    working_directory: /data
+    docker:
+      - image: ankitwal/iat-terraform-aws:v0.3.0
+    parameters:
+      environment:
+        type: string
+      stack:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: terraform lint
+          command: |
+            cd week2/stacks/<< parameters.stack >>
+            terraform init -input=false -backend-config="key=<< pipeline.parameters.team >>/<< parameters.environment >>/<< parameters.stack >>"
+            tfsec
+
   plan:
     working_directory: /tmp/project
     docker:
@@ -94,8 +112,13 @@ workflows:
           - << pipeline.parameters.pipeline-config >>
           - << pipeline.parameters.networking >>
     jobs:
-      - lint:
-          name: networking-lint
+#      - lint:
+#          name: networking-lint
+#          <<: *default-context
+#          environment: 'stg'
+#          stack: 'networking'
+      - sec:
+          name: networking-sec
           <<: *default-context
           environment: 'stg'
           stack: 'networking'
@@ -105,7 +128,7 @@ workflows:
           environment: 'stg'
           stack: 'networking'
           requires:
-            - networking-lint
+            - networking-sec
       - networking-approve-stg:
           type: approval
           requires:
