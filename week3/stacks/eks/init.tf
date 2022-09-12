@@ -13,6 +13,8 @@ terraform {
       version = "~> 2.13.0"
     }
   }
+  #tflint-fix
+  required_version = "~> 1.2.1"
 
 }
 
