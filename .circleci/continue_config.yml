@@ -202,3 +202,49 @@ workflows:
           stack: 'eks'
           requires:
             - eks-approve-prod
+  app-a:
+    when:
+      condition:
+        or:
+          - << pipeline.parameters.pipeline-config >>
+          - << pipeline.parameters.app-a>>
+    jobs:
+      - sec:
+          name: app-a-sec
+          <<: *default-context
+          environment: 'stg'
+          stack: 'app-a'
+      - plan:
+          name: app-a-plan-stg
+          <<: *default-context
+          environment: 'stg'
+          stack: 'app-a'
+          requires:
+            - app-a-sec
+      - app-a-approve-stg:
+          type: approval
+          requires:
+            - app-a-plan-stg
+      - apply:
+          name: app-a-apply-stg
+          <<: *default-context
+          stack: 'app-a'
+          requires:
+            - app-a-approve-stg
+      - plan:
+          name: app-a-plan-prod
+          <<: *default-context
+          environment: 'prod'
+          stack: 'app-a'
+          requires:
+            - app-a-apply-stg
+      - app-a-approve-prod:
+          type: approval
+          requires:
+            - app-a-plan-prod
+      - apply:
+          name: app-a-apply-prod
+          <<: *default-context
+          stack: 'app-a'
+          requires:
+            - app-a-approve-prod
