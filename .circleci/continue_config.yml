@@ -39,7 +39,7 @@ jobs:
       - run:
           name: terraform lint
           command: |
-            cd week2/stacks/<< parameters.stack >>
+            cd week3/stacks/<< parameters.stack >>
             tflint --init
             tflint
   sec:
@@ -56,7 +56,7 @@ jobs:
       - run:
           name: terraform sec
           command: |
-            cd week2/stacks/<< parameters.stack >>
+            cd week3/stacks/<< parameters.stack >>
             terraform init -input=false -backend-config="key=<< pipeline.parameters.team >>/<< parameters.environment >>/<< parameters.stack >>"
             tfsec
   plan:
@@ -73,7 +73,7 @@ jobs:
       - run:
           name: terraform init & plan
           command: |
-            cd week2/stacks/<< parameters.stack >>
+            cd week3/stacks/<< parameters.stack >>
             terraform init -input=false -backend-config="key=<< pipeline.parameters.team >>/<< parameters.environment >>/<< parameters.stack >>"
             terraform plan \
             -var 'team_name=<< pipeline.parameters.team >>' \
@@ -95,7 +95,7 @@ jobs:
       - run:
           name: terraform
           command: |
-            cd week2/stacks/<< parameters.stack >>
+            cd week3/stacks/<< parameters.stack >>
             terraform apply -auto-approve tfapply
 
 # workflows are pipelines that are conditionally triggered depending of the on the pipeline.parameters
