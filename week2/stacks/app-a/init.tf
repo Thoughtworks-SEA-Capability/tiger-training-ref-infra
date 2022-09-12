@@ -13,11 +13,9 @@ terraform {
       version = "~> 2.13.0"
     }
   }
-  required_version = "~> 1.2.1"
 
 }
 
 provider "aws" {
   region = "ap-southeast-1"
 }
-
