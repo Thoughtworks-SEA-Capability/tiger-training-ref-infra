@@ -31,6 +31,9 @@ module "vpc" {
     type = "public"
   })
 
+  #tfsec-advised-fix
+  map_public_ip_on_launch = false
+
   private_subnets = [
     # Private subnets for EKS Control Plane
     "10.0.104.0/24", "10.0.105.0/24", "10.0.106.0/24",
