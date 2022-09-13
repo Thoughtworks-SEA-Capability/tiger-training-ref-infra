@@ -5,11 +5,11 @@ terraform {
   }
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "~> 4.27.0"
     }
     kubernetes = {
-      source = "hashicorp/kubernetes"
+      source  = "hashicorp/kubernetes"
       version = "~> 2.13.0"
     }
   }
@@ -20,4 +20,8 @@ terraform {
 
 provider "aws" {
   region = "ap-southeast-1"
+  #tfsec-custom-fix
+  default_tags {
+    owner = "platform"
+  }
 }
