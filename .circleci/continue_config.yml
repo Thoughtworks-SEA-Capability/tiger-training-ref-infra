@@ -58,7 +58,7 @@ jobs:
           command: |
             cd week3/stacks/<< parameters.stack >>
             terraform init -input=false -backend-config="key=<< pipeline.parameters.team >>/<< parameters.environment >>/<< parameters.stack >>"
-            tfsec --compliance-dir ../../compliance
+            tfsec --custom-check-dir ../../compliance
   plan:
     working_directory: /tmp/project
     docker:
