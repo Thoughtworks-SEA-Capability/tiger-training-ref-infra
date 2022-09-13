@@ -1,0 +1,19 @@
+---
+checks:
+  - code: CUS001
+    description: Custom check to ensure that all subnets have a owner tag
+    impact: By not having a owner tag
+    resolution: Add the owner tag
+    requiredTypes:
+      - provider
+    requiredLabels:
+      - aws
+    severity: ERROR
+    matchSpec:
+      name: default_tags
+      action: isPresent
+      subMatch:
+        name: tags
+        action: contains
+        value: owner
+    errorMessage: The required owner tag was missing

@@ -23,10 +23,11 @@ workflows:
           # line:
           # <regex path-to-test> <parameter-to-set> <value-of-pipeline-parameter>
           mapping: |
-            week2/stacks/networking/.* networking true
-            week2/stacks/eks/.* eks true
-            week2/stacks/app-a/.* app-a true
+            week3/stacks/networking/.* networking true
+            week3/stacks/eks/.* eks true
+            week3/stacks/app-a/.* app-a true
             .circleci/.* pipeline-config true
+            week3/compliance/.* pipeline-config true
           base-revision: main
           # this is the path of the configuration we should trigger once
           # path filtering and pipeline parameter value updates are
