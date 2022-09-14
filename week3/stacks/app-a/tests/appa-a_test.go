@@ -45,11 +45,11 @@ func TestAppAStack(t *testing.T) {
 		}
 		k8s.KubectlApplyFromString(t, options, string(podYmlBytes))
 		defer k8s.KubectlDeleteFromString(t, options, string(podYmlBytes))
-		k8s.WaitUntilPodAvailable(t, options, "test-pod", 15, 3*time.Second)
+		k8s.WaitUntilPodAvailable(t, options, "test-app-pod", 15, 3*time.Second)
 
 		// fire test command from test pod
 		// this will test if the test pod can reach the RDS DB at the given endpoint and port
 		// it will test if the test pod can log into the RDS DB with the given username and password
-		k8s.RunKubectl(t, options, []string{"exec", "test-pod", "--", "sh", "-c", "PGPASSWORD=$db_password psql -h $db_endpoint -d postgres -U $db_username"}...)
+		k8s.RunKubectl(t, options, []string{"exec", "test-app-pod", "--", "sh", "-c", "PGPASSWORD=$db_password psql -h $db_endpoint -d postgres -U $db_username"}...)
 	})
 }

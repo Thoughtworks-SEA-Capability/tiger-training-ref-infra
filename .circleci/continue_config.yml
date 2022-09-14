@@ -206,13 +206,20 @@ workflows:
           stack: 'eks'
           requires:
             - eks-approve-stg
+      - test:
+          name: eks-test
+          <<: *default-context
+          stack: 'eks'
+          environment: 'stg'
+          requires:
+           - eks-apply-stg
       - plan:
           name: eks-plan-prod
           <<: *default-context
           environment: 'prod'
           stack: 'eks'
           requires:
-            - eks-apply-stg
+            - eks-test
       - eks-approve-prod:
           type: approval
           requires:
