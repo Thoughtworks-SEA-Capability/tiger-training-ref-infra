@@ -71,10 +71,10 @@ jobs:
     steps:
       - checkout
       - run:
-          name: terraform sec
+          name: test
           command: |
             cd week3/stacks/<< parameters.stack >>/test
-            TEAM_NAME=<< pipeline.parameters.team> ENVIRONMENT=<< parameters.environment >> go test
+            TEAM_NAME=<< pipeline.parameters.team >> ENVIRONMENT=<< parameters.environment >> go test
   plan:
     working_directory: /tmp/project
     docker:
