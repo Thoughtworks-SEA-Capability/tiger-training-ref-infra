@@ -59,6 +59,22 @@ jobs:
             cd week3/stacks/<< parameters.stack >>
             terraform init -input=false -backend-config="key=<< pipeline.parameters.team >>/<< parameters.environment >>/<< parameters.stack >>"
             tfsec --custom-check-dir ../../compliance
+  test:
+    working_directory: /data
+    docker:
+      - image: ankitwal/iat-terraform-aws:v0.4.0
+    parameters:
+      environment:
+        type: string
+      stack:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: terraform sec
+          command: |
+            cd week3/stacks/<< parameters.stack >>/test
+            TEAM_NAME=<< pipeline.parameters.team> ENVIRONMENT=<< parameters.environment >> go test
   plan:
     working_directory: /tmp/project
     docker:
@@ -242,13 +258,19 @@ workflows:
           stack: 'app-a'
           requires:
             - app-a-approve-stg
+      - test:
+          name: app-a-test
+          <<: *default-context
+          stack: 'app-a'
+          requires:
+            - app-a-apply-stg
       - plan:
           name: app-a-plan-prod
           <<: *default-context
           environment: 'prod'
           stack: 'app-a'
           requires:
-            - app-a-apply-stg
+            - app-a-test
       - app-a-approve-prod:
           type: approval
           requires:
