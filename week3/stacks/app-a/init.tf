@@ -17,10 +17,4 @@ terraform {
 
 provider "aws" {
   region = "ap-southeast-1"
-  #tfsec-custom-fix
-  default_tags  {
-    tags = {
-      owner = "app"
-    }
-  }
 }

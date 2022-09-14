@@ -12,7 +12,6 @@ locals {
 
 data "aws_caller_identity" "current" {}
 
-#tfsec:ignore:aws-eks-no-public-cluster-access tfsec:ignore:aws-ec2-no-public-egress-sgr tfsec:ignore:aws-eks-no-public-cluster-access-to-cidr
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "18.26.2"
@@ -120,8 +119,6 @@ module "eks" {
 
   tags = local.tags
 
-  #tfsec-advised-fix
-  cluster_enabled_log_types = ["api", "authenticator", "audit", "scheduler", "controllerManager"]
 }
 
 # References to resources that do not exist yet when creating a cluster will cause a plan failure due to https://github.com/hashicorp/terraform/issues/4149
@@ -163,7 +160,6 @@ resource "aws_kms_key" "eks" {
   tags = local.tags
 }
 
-#tfsec:ignore:aws-iam-no-policy-wildcards
 resource "aws_iam_policy" "node_additional" {
   name        = "${local.name}-additional"
   description = "Example usage of node additional policy"
