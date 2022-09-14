@@ -1,11 +1,11 @@
 package tests
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"os"
 	"testing"
-	"time"
 )
 
 func TestEKSStack(t *testing.T) {
@@ -26,31 +26,41 @@ func TestEKSStack(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	// WARNING - this updates the kubectl context for the whole machine
+	// WARNING - this updates the kubectl context for the whole machine, but is okay for tests running in containers
+	// for one cluster
 	UpdateKubeConfig(t, clusterName, clusterRole)
 
-	t.Run("ClusterAndAllNodesAreHealthy", func(t *testing.T) {
+	t.Run("ExampleTestCanIGetAllNodes", func(t *testing.T) {
 		options := k8s.NewKubectlOptions("", "", namespace)
-		k8s.AreAllNodesReady(t, options)
+		k8s.GetNodes(t, options)
+	})
+	t.Run("ClusterAndAllNodesAreHealthy", func(t *testing.T) {
+		// Todo - use terratest's K8s module to check if all nodes are healthy.
+		// Todo - Consider - is this test useful ?
+		t.Error(errors.New("Test unimplemented"))
 	})
 
 	t.Run("TestEKSCanBeAdministeredByClusterAdminRole", func(t *testing.T) {
 		// With the understanding that clusterAdminRoles should be able to create and delete namespace we can
 		// simulate that behaviour
-		options := k8s.NewKubectlOptions("", "", namespace)
-		namespaceName := fmt.Sprintf("test-ns-%d", time.Now().Unix())
-		k8s.CreateNamespace(t, options, namespaceName)
-		defer k8s.DeleteNamespace(t, options, namespaceName)
+		// Todo - Test if can create a random namespace
+		// Todo - Cleanup/Delete created namespace
+		t.Error(errors.New("Test unimplemented"))
 	})
 
 	t.Run("ShouldBeAbleToCreatePodInApplicationNamespace", func(t *testing.T) {
-		options := k8s.NewKubectlOptions("", "", namespace)
-		k8s.KubectlApply(t, options, "./pod.yml")
-		defer k8s.KubectlDelete(t, options, "./pod.yml")
-		k8s.WaitUntilPodAvailable(t, options, "test-eks-pod", 15, 3*time.Second)
-
-		t.Run("PodsShouldBeAbleToTalkToPublicEndpoints", func(t *testing.T) {
-			k8s.RunKubectl(t, options, []string{"exec", "test-eks-pod", "--", "sh", "-c", "curl www.google.com"}...)
-		})
+		// Todo - Create a sample Pod using the ./pod.yml spec provided
+		// Todo - Ensure Pod can spin up healthy
+		// Todo - Clean up Pod after test
+		t.Error(errors.New("Test unimplemented"))
 	})
+
+	t.Run("PodsShouldBeAbleToTalkToPublicEndpoints", func(t *testing.T) {
+		// Todo - Create a sample Pod using the ./pod.yml spec provided
+		// Todo - Ensure Pod can spin up healthy
+		// Todo - Using kubectle exec and curl(installed in pod image) check if pod can reach google.com
+		// Todo - Clean up Pod after test
+		t.Error(errors.New("Test unimplemented"))
+	})
+	// Solutions at: https://github.com/Thoughtworks-SEA-Capability/infra-training-ref-infra/blob/1cb098965df1e6c8649de59020b5eb96285e414a/week3/stacks/eks/tests/eks_test.go
 }
