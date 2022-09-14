@@ -5,6 +5,7 @@ metadata:
 spec:
   containers:
     - name: test-pod
+      imagePullPolicy: Always
       image: 911960542707.dkr.ecr.ap-southeast-1.amazonaws.com/infra-training-test-pod:v1
       command: [ "/bin/sh", "-c", "--" ]
       args: [ "sleep 3600" ]
