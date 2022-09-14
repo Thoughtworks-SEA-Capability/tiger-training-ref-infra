@@ -178,24 +178,11 @@ workflows:
           - << pipeline.parameters.pipeline-config >>
           - << pipeline.parameters.eks >>
     jobs:
-      - lint:
-          name: eks-lint
-          <<: *default-context
-          environment: 'stg'
-          stack: 'eks'
-      - sec:
-          name: eks-sec
-          <<: *default-context
-          environment: 'stg'
-          stack: 'eks'
       - plan:
           name: eks-plan-stg
           <<: *default-context
           environment: 'stg'
           stack: 'eks'
-          requires:
-            - eks-sec
-            - eks-lint
       - eks-approve-stg:
           type: approval
           requires:
@@ -206,13 +193,6 @@ workflows:
           stack: 'eks'
           requires:
             - eks-approve-stg
-      - test:
-          name: eks-test
-          <<: *default-context
-          stack: 'eks'
-          environment: 'stg'
-          requires:
-           - eks-apply-stg
       - plan:
           name: eks-plan-prod
           <<: *default-context
@@ -237,24 +217,11 @@ workflows:
           - << pipeline.parameters.pipeline-config >>
           - << pipeline.parameters.app-a>>
     jobs:
-      - lint:
-          name: app-a-lint
-          <<: *default-context
-          environment: 'stg'
-          stack: 'app-a'
-      - sec:
-          name: app-a-sec
-          <<: *default-context
-          environment: 'stg'
-          stack: 'app-a'
       - plan:
           name: app-a-plan-stg
           <<: *default-context
           environment: 'stg'
           stack: 'app-a'
-          requires:
-            - app-a-sec
-            - app-a-lint
       - app-a-approve-stg:
           type: approval
           requires:
