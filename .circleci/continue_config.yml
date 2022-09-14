@@ -199,7 +199,7 @@ workflows:
           environment: 'prod'
           stack: 'eks'
           requires:
-            - eks-test
+            - eks-apply-stg
       - eks-approve-prod:
           type: approval
           requires:
