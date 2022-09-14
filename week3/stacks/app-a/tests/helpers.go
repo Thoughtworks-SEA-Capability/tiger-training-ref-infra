@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ssm"
 	"github.com/aws/aws-sdk-go/service/ssm/ssmiface"
@@ -14,9 +15,12 @@ type parameterStoreClient struct {
 }
 
 func NewParameterStoreClient() *parameterStoreClient {
-	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}))
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String("ap-southeast-1")},
+	)
+	if err != nil {
+		return nil
+	}
 	return &parameterStoreClient{
 		ssm.New(sess),
 	}
