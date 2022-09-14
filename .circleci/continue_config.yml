@@ -262,6 +262,7 @@ workflows:
           name: app-a-test
           <<: *default-context
           stack: 'app-a'
+          environment: 'stg'
           requires:
             - app-a-apply-stg
       - plan:
