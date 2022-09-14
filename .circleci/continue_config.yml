@@ -237,41 +237,41 @@ workflows:
           - << pipeline.parameters.pipeline-config >>
           - << pipeline.parameters.app-a>>
     jobs:
-#      - lint:
-#          name: app-a-lint
-#          <<: *default-context
-#          environment: 'stg'
-#          stack: 'app-a'
-#      - sec:
-#          name: app-a-sec
-#          <<: *default-context
-#          environment: 'stg'
-#          stack: 'app-a'
-#      - plan:
-#          name: app-a-plan-stg
-#          <<: *default-context
-#          environment: 'stg'
-#          stack: 'app-a'
-#          requires:
-#            - app-a-sec
-#            - app-a-lint
-#      - app-a-approve-stg:
-#          type: approval
-#          requires:
-#            - app-a-plan-stg
-#      - apply:
-#          name: app-a-apply-stg
-#          <<: *default-context
-#          stack: 'app-a'
-#          requires:
-#            - app-a-approve-stg
+      - lint:
+          name: app-a-lint
+          <<: *default-context
+          environment: 'stg'
+          stack: 'app-a'
+      - sec:
+          name: app-a-sec
+          <<: *default-context
+          environment: 'stg'
+          stack: 'app-a'
+      - plan:
+          name: app-a-plan-stg
+          <<: *default-context
+          environment: 'stg'
+          stack: 'app-a'
+          requires:
+            - app-a-sec
+            - app-a-lint
+      - app-a-approve-stg:
+          type: approval
+          requires:
+            - app-a-plan-stg
+      - apply:
+          name: app-a-apply-stg
+          <<: *default-context
+          stack: 'app-a'
+          requires:
+            - app-a-approve-stg
       - test:
           name: app-a-test
           <<: *default-context
           stack: 'app-a'
           environment: 'stg'
-#          requires:
-#            - app-a-apply-stg
+          requires:
+            - app-a-apply-stg
       - plan:
           name: app-a-plan-prod
           <<: *default-context
