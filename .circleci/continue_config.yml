@@ -62,7 +62,7 @@ jobs:
   test:
     working_directory: /data
     docker:
-      - image: ankitwal/iat-tester:v0.1.0
+      - image: ankitwal/iat-tester:v0.3.0
     parameters:
       environment:
         type: string
