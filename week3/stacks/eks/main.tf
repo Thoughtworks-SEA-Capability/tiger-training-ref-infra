@@ -208,15 +208,12 @@ data "aws_eks_cluster" "default" {
   name = module.eks.cluster_id
 }
 
-#tflint-fix
-#data "aws_eks_cluster_auth" "default" {
-#  name = module.eks.cluster_id
-#}
+data "aws_eks_cluster_auth" "default" {
+  name = module.eks.cluster_id
+}
 
 variable "change_ci_created_stack_from_local" {
   default     = false
-  #tflint-fix
-  type        = bool
   description = "Useful run terraform for ci created K8s resources from local. "
 }
 
