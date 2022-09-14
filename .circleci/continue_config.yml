@@ -73,7 +73,7 @@ jobs:
       - run:
           name: test
           command: |
-            cd week3/stacks/<< parameters.stack >>/test
+            cd week3/stacks/<< parameters.stack >>/tests
             TEAM_NAME=<< pipeline.parameters.team >> ENVIRONMENT=<< parameters.environment >> go test
   plan:
     working_directory: /tmp/project
