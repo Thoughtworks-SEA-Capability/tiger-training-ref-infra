@@ -25,10 +25,60 @@ parameters:
 
 # these are re-usable jobs that are re-used with relevant parameters for each of the stacks.
 jobs:
+  lint:
+    working_directory: /data
+    docker:
+      - image: ghcr.io/terraform-linters/tflint:v0.40.0
+    parameters:
+      environment:
+        type: string
+      stack:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: terraform lint
+          command: |
+            cd week3/stacks/<< parameters.stack >>
+            tflint --init
+            tflint
+  sec:
+    working_directory: /data
+    docker:
+      - image: ankitwal/iat-terraform-aws:v0.3.0
+    parameters:
+      environment:
+        type: string
+      stack:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: terraform sec
+          command: |
+            cd week3/stacks/<< parameters.stack >>
+            terraform init -input=false -backend-config="key=<< pipeline.parameters.team >>/<< parameters.environment >>/<< parameters.stack >>"
+            tfsec --custom-check-dir ../../compliance
+  test:
+    working_directory: /data
+    docker:
+      - image: ankitwal/iat-tester:v0.3.0
+    parameters:
+      environment:
+        type: string
+      stack:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: test
+          command: |
+            cd week3/stacks/<< parameters.stack >>/tests
+            TEAM_NAME=<< pipeline.parameters.team >> ENVIRONMENT=<< parameters.environment >> go test
   plan:
     working_directory: /tmp/project
     docker:
-      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
+      - image: ankitwal/iat-terraform-aws:v0.1.0
     parameters:
       environment:
         type: string
@@ -39,7 +89,7 @@ jobs:
       - run:
           name: terraform init & plan
           command: |
-            cd week2/stacks/<< parameters.stack >>
+            cd week3/stacks/<< parameters.stack >>
             terraform init -input=false -backend-config="key=<< pipeline.parameters.team >>/<< parameters.environment >>/<< parameters.stack >>"
             terraform plan \
             -var 'team_name=<< pipeline.parameters.team >>' \
@@ -49,11 +99,9 @@ jobs:
           root: .
           paths:
             - .
-
   apply:
-    working_directory: /tmp/project
     docker:
-      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
+      - image: ankitwal/iat-terraform-aws:v0.1.0
     parameters:
       stack:
         type: string
@@ -63,7 +111,7 @@ jobs:
       - run:
           name: terraform
           command: |
-            cd week2/stacks/<< parameters.stack >>
+            cd week3/stacks/<< parameters.stack >>
             terraform apply -auto-approve tfapply
 
 # workflows are pipelines that are conditionally triggered depending of the on the pipeline.parameters
@@ -78,34 +126,51 @@ workflows:
           - << pipeline.parameters.pipeline-config >>
           - << pipeline.parameters.networking >>
     jobs:
+      - lint:
+          name: networking-lint
+          <<: *default-context
+          environment: 'stg'
+          stack: 'networking'
+      - sec:
+          name: networking-sec
+          <<: *default-context
+          environment: 'stg'
+          stack: 'networking'
       - plan:
           name: networking-plan-stg
           <<: *default-context
           environment: 'stg'
           stack: 'networking'
+          requires:
+            - networking-sec
+            - networking-lint
+      - networking-approve-stg:
+          type: approval
+          requires:
+            - networking-plan-stg
       - apply:
           name: networking-apply-stg
           <<: *default-context
           stack: 'networking'
           requires:
-            - networking-plan-stg
-      # - plan:
-      #     name: networking-plan-prod
-      #     <<: *default-context
-      #     environment: 'prod'
-      #     stack: 'networking'
-      #     requires:
-      #       - networking-apply-stg
-      # - networking-approve-prod:
-      #     type: approval
-      #     requires:
-      #       - networking-plan-prod
-      # - apply:
-      #     name: networking-apply-prod
-      #     <<: *default-context
-      #     stack: 'networking'
-      #     requires:
-      #       - networking-approve-prod
+            - networking-approve-stg
+      - plan:
+          name: networking-plan-prod
+          <<: *default-context
+          environment: 'prod'
+          stack: 'networking'
+          requires:
+            - networking-apply-stg
+      - networking-approve-prod:
+          type: approval
+          requires:
+            - networking-plan-prod
+      - apply:
+          name: apply-prod
+          <<: *default-context
+          stack: 'networking'
+          requires:
+            - networking-approve-prod
   eks:
     when:
       condition:
@@ -118,61 +183,76 @@ workflows:
           <<: *default-context
           environment: 'stg'
           stack: 'eks'
+      - eks-approve-stg:
+          type: approval
+          requires:
+            - eks-plan-stg
       - apply:
           name: eks-apply-stg
           <<: *default-context
           stack: 'eks'
           requires:
-            - eks-plan-stg
-      # - plan:
-      #     name: eks-plan-prod
-      #     <<: *default-context
-      #     environment: 'prod'
-      #     stack: 'eks'
-      #     requires:
-      #       - eks-apply-stg
-      # - eks-approve-prod:
-      #     type: approval
-      #     requires:
-      #       - eks-plan-prod
-      # - apply:
-      #     name: eks-apply-prod
-      #     <<: *default-context
-      #     stack: 'eks'
-      #     requires:
-      #       - eks-approve-prod
+            - eks-approve-stg
+      - plan:
+          name: eks-plan-prod
+          <<: *default-context
+          environment: 'prod'
+          stack: 'eks'
+          requires:
+            - eks-apply-stg
+      - eks-approve-prod:
+          type: approval
+          requires:
+            - eks-plan-prod
+      - apply:
+          name: eks-apply-prod
+          <<: *default-context
+          stack: 'eks'
+          requires:
+            - eks-approve-prod
   app-a:
     when:
       condition:
         or:
           - << pipeline.parameters.pipeline-config >>
-          - << pipeline.parameters.app-a >>
+          - << pipeline.parameters.app-a>>
     jobs:
       - plan:
           name: app-a-plan-stg
           <<: *default-context
           environment: 'stg'
           stack: 'app-a'
+      - app-a-approve-stg:
+          type: approval
+          requires:
+            - app-a-plan-stg
       - apply:
           name: app-a-apply-stg
           <<: *default-context
           stack: 'app-a'
           requires:
-            - app-a-plan-stg
-      # - plan:
-      #     name: app-a-plan-prod
-      #     <<: *default-context
-      #     environment: 'prod'
-      #     stack: 'app-a'
-      #     requires:
-      #       - app-a-apply-stg
-      # - app-a-approve-prod:
-      #     type: approval
-      #     requires:
-      #       - app-a-plan-prod
-      # - apply:
-      #     name: app-a-apply-prod
-      #     <<: *default-context
-      #     stack: 'app-a'
-      #     requires:
-      #       - app-a-approve-prod
+            - app-a-approve-stg
+      - test:
+          name: app-a-test
+          <<: *default-context
+          stack: 'app-a'
+          environment: 'stg'
+          requires:
+            - app-a-apply-stg
+      - plan:
+          name: app-a-plan-prod
+          <<: *default-context
+          environment: 'prod'
+          stack: 'app-a'
+          requires:
+            - app-a-test
+      - app-a-approve-prod:
+          type: approval
+          requires:
+            - app-a-plan-prod
+      - apply:
+          name: app-a-apply-prod
+          <<: *default-context
+          stack: 'app-a'
+          requires:
+            - app-a-approve-prod

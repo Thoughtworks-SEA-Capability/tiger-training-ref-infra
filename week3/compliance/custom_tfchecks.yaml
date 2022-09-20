@@ -1,0 +1,21 @@
+---
+checks:
+  - code: CUS001
+    description: Custom check to ensure that all taggable resources have owner tag
+    impact: By not having a owner tag the resource cannot be attributed to the correct team
+    resolution: Add owner as one of default_tags to aws provider config
+    requiredTypes:
+      - provider
+    requiredLabels:
+      - aws
+    severity: ERROR
+    matchSpec:
+      name: default_tags
+      action: isPresent
+      subMatch:
+        name: tags
+        action: contains
+        value: owner
+    errorMessage: The required owner default tag was missing
+
+# more: https://aquasecurity.github.io/tfsec/v0.63.1/getting-started/configuration/custom-checks/
