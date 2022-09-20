@@ -183,12 +183,18 @@ workflows:
           <<: *default-context
           environment: 'stg'
           stack: 'eks'
+      - sec:
+          name: eks-sec
+          <<: *default-context
+          environment: 'stg'
+          stack: 'eks'
       - plan:
           name: eks-plan-stg
           <<: *default-context
           environment: 'stg'
           stack: 'eks'
           requires:
+            - eks-sec
             - eks-lint
       - eks-approve-stg:
           type: approval
@@ -229,6 +235,11 @@ workflows:
           <<: *default-context
           environment: 'stg'
           stack: 'app-a'
+      - sec:
+          name: app-a-sec
+          <<: *default-context
+          environment: 'stg'
+          stack: 'app-a'
       - plan:
           name: app-a-plan-stg
           <<: *default-context
@@ -236,6 +247,7 @@ workflows:
           stack: 'app-a'
           requires:
             - app-a-lint
+            - app-a-sec
       - app-a-approve-stg:
           type: approval
           requires:
