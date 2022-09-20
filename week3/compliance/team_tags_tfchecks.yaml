@@ -1,0 +1,18 @@
+---
+checks:
+- code: CUS002
+  description: Custom check to ensure the team tag is applied to RDS
+  impact: By not having team we can't keep track of owner
+  resolution: Add the team tag
+  requiredTypes:
+  - resource
+  requiredLabels:
+  - aws_rds_*
+  severity: ERROR
+  matchSpec:
+    name: tags
+    action: contains
+    value: team
+  errorMessage: The required team tag was missing
+  relatedLinks:
+  - http://internal.acmecorp.com/standards/aws/tagging.html
