@@ -89,23 +89,23 @@ workflows:
           stack: 'networking'
           requires:
             - networking-plan-stg
-      # - plan:
-      #     name: networking-plan-prod
-      #     <<: *default-context
-      #     environment: 'prod'
-      #     stack: 'networking'
-      #     requires:
-      #       - networking-apply-stg
-      # - networking-approve-prod:
-      #     type: approval
-      #     requires:
-      #       - networking-plan-prod
-      # - apply:
-      #     name: networking-apply-prod
-      #     <<: *default-context
-      #     stack: 'networking'
-      #     requires:
-      #       - networking-approve-prod
+      - plan:
+          name: networking-plan-prod
+          <<: *default-context
+          environment: 'prod'
+          stack: 'networking'
+          requires:
+            - networking-apply-stg
+      - networking-approve-prod:
+          type: approval
+          requires:
+            - networking-plan-prod
+      - apply:
+          name: networking-apply-prod
+          <<: *default-context
+          stack: 'networking'
+          requires:
+            - networking-approve-prod
   eks:
     when:
       condition:
@@ -124,23 +124,23 @@ workflows:
           stack: 'eks'
           requires:
             - eks-plan-stg
-      # - plan:
-      #     name: eks-plan-prod
-      #     <<: *default-context
-      #     environment: 'prod'
-      #     stack: 'eks'
-      #     requires:
-      #       - eks-apply-stg
-      # - eks-approve-prod:
-      #     type: approval
-      #     requires:
-      #       - eks-plan-prod
-      # - apply:
-      #     name: eks-apply-prod
-      #     <<: *default-context
-      #     stack: 'eks'
-      #     requires:
-      #       - eks-approve-prod
+      - plan:
+          name: eks-plan-prod
+          <<: *default-context
+          environment: 'prod'
+          stack: 'eks'
+          requires:
+            - eks-apply-stg
+      - eks-approve-prod:
+          type: approval
+          requires:
+            - eks-plan-prod
+      - apply:
+          name: eks-apply-prod
+          <<: *default-context
+          stack: 'eks'
+          requires:
+            - eks-approve-prod
   app-a:
     when:
       condition:
@@ -159,20 +159,20 @@ workflows:
           stack: 'app-a'
           requires:
             - app-a-plan-stg
-      # - plan:
-      #     name: app-a-plan-prod
-      #     <<: *default-context
-      #     environment: 'prod'
-      #     stack: 'app-a'
-      #     requires:
-      #       - app-a-apply-stg
-      # - app-a-approve-prod:
-      #     type: approval
-      #     requires:
-      #       - app-a-plan-prod
-      # - apply:
-      #     name: app-a-apply-prod
-      #     <<: *default-context
-      #     stack: 'app-a'
-      #     requires:
-      #       - app-a-approve-prod
+      - plan:
+          name: app-a-plan-prod
+          <<: *default-context
+          environment: 'prod'
+          stack: 'app-a'
+          requires:
+            - app-a-apply-stg
+      - app-a-approve-prod:
+          type: approval
+          requires:
+            - app-a-plan-prod
+      - apply:
+          name: app-a-apply-prod
+          <<: *default-context
+          stack: 'app-a'
+          requires:
+            - app-a-approve-prod
