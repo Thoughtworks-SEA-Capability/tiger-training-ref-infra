@@ -1,11 +1,12 @@
 package tests
 
 import (
-	"errors"
 	"fmt"
 	"github.com/gruntwork-io/terratest/modules/k8s"
+	"io/ioutil"
 	"os"
 	"testing"
+	"time"
 )
 
 func TestEKSStack(t *testing.T) {
@@ -37,7 +38,8 @@ func TestEKSStack(t *testing.T) {
 	t.Run("ClusterAndAllNodesAreHealthy", func(t *testing.T) {
 		// Todo - use terratest's K8s module to check if all nodes are healthy.
 		// Todo - Consider - is this test useful ?
-		t.Error(errors.New("Test unimplemented"))
+		options := k8s.NewKubectlOptions("", "", namespace)
+		k8s.AreAllNodesReady(t, options)
 	})
 
 	t.Run("TestEKSCanBeAdministeredByClusterAdminRole", func(t *testing.T) {
@@ -45,14 +47,23 @@ func TestEKSStack(t *testing.T) {
 		// simulate that behaviour
 		// Todo - Test if can create a random namespace
 		// Todo - Cleanup/Delete created namespace
-		t.Error(errors.New("Test unimplemented"))
+		options := k8s.NewKubectlOptions("", "", namespace)
+		defer k8s.DeleteNamespace(t, options, "tiger")
+		k8s.CreateNamespace(t, options, "tiger")
 	})
 
 	t.Run("ShouldBeAbleToCreatePodInApplicationNamespace", func(t *testing.T) {
 		// Todo - Create a sample Pod using the ./pod.yml spec provided
 		// Todo - Ensure Pod can spin up healthy
 		// Todo - Clean up Pod after test
-		t.Error(errors.New("Test unimplemented"))
+		options := k8s.NewKubectlOptions("", "", namespace)
+		podYmlBytes, err := ioutil.ReadFile("./pod.yml")
+		if err != nil {
+			t.Error(err)
+		}
+		k8s.KubectlApplyFromString(t, options, string(podYmlBytes))
+		defer k8s.KubectlDeleteFromString(t, options, string(podYmlBytes))
+		k8s.WaitUntilPodAvailable(t, options, "test-eks-pod", 15, 3*time.Second)
 	})
 
 	t.Run("PodsShouldBeAbleToTalkToPublicEndpoints", func(t *testing.T) {
@@ -60,7 +71,17 @@ func TestEKSStack(t *testing.T) {
 		// Todo - Ensure Pod can spin up healthy
 		// Todo - Using kubectle exec and curl(installed in pod image) check if pod can reach google.com
 		// Todo - Clean up Pod after test
-		t.Error(errors.New("Test unimplemented"))
+
+		options := k8s.NewKubectlOptions("", "", namespace)
+		podYmlBytes, err := ioutil.ReadFile("./pod.yml")
+		if err != nil {
+			t.Error(err)
+		}
+		k8s.KubectlApplyFromString(t, options, string(podYmlBytes))
+		defer k8s.KubectlDeleteFromString(t, options, string(podYmlBytes))
+		k8s.WaitUntilPodAvailable(t, options, "test-eks-pod", 15, 3*time.Second)
+
+		k8s.RunKubectl(t, options, []string{"exec", "test-eks-pod", "--", "sh", "-c", "curl google.com"}...)
 	})
 	// Solutions at: https://github.com/Thoughtworks-SEA-Capability/infra-training-ref-infra/blob/1cb098965df1e6c8649de59020b5eb96285e414a/week3/stacks/eks/tests/eks_test.go
 }
